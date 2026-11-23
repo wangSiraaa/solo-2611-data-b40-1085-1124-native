@@ -1,0 +1,1584 @@
+[
+  {
+    "name": "P 期初注资",
+    "op": "post",
+    "journal_id": "opening",
+    "entity": "P",
+    "lines": [
+      [
+        "cash",
+        100,
+        0
+      ],
+      [
+        "inventory",
+        40,
+        0
+      ],
+      [
+        "capital",
+        0,
+        140
+      ]
+    ],
+    "document": null,
+    "assert": {
+      "status": "committed",
+      "seq": 1
+    }
+  },
+  {
+    "name": "S 期初注资",
+    "op": "post",
+    "journal_id": "opening",
+    "entity": "S",
+    "lines": [
+      [
+        "cash",
+        100,
+        0
+      ],
+      [
+        "capital",
+        0,
+        100
+      ]
+    ],
+    "document": null,
+    "assert": {
+      "status": "committed",
+      "seq": 1,
+      "head": {
+        "P": 1,
+        "S": 1
+      }
+    }
+  },
+  {
+    "name": "P 卖方 i1 售价80成本40数量4",
+    "op": "post",
+    "journal_id": "seller-i1",
+    "entity": "P",
+    "lines": [
+      [
+        "receivable",
+        80,
+        0
+      ],
+      [
+        "revenue",
+        0,
+        80
+      ],
+      [
+        "cost",
+        40,
+        0
+      ],
+      [
+        "inventory",
+        0,
+        40
+      ]
+    ],
+    "document": {
+      "type": "internal_sale",
+      "side": "seller",
+      "invoice_id": "i1",
+      "seller": "P",
+      "buyer": "S",
+      "sku": "X",
+      "q": 4,
+      "T": 80,
+      "C": 40
+    },
+    "assert": {
+      "status": "committed",
+      "seq": 2
+    }
+  },
+  {
+    "name": "S 买方 i1 镜像",
+    "op": "post",
+    "journal_id": "buyer-i1",
+    "entity": "S",
+    "lines": [
+      [
+        "inventory",
+        80,
+        0
+      ],
+      [
+        "payable",
+        0,
+        80
+      ]
+    ],
+    "document": {
+      "type": "internal_sale",
+      "side": "buyer",
+      "invoice_id": "i1",
+      "seller": "P",
+      "buyer": "S",
+      "sku": "X",
+      "q": 4,
+      "T": 80,
+      "C": 40
+    },
+    "assert": {
+      "status": "committed",
+      "seq": 2
+    }
+  },
+  {
+    "name": "S 对外售出 2 件（普通外部凭证，合并必须保留）",
+    "op": "post",
+    "journal_id": "external-sale",
+    "entity": "S",
+    "lines": [
+      [
+        "cash",
+        60,
+        0
+      ],
+      [
+        "revenue",
+        0,
+        60
+      ],
+      [
+        "cost",
+        40,
+        0
+      ],
+      [
+        "inventory",
+        0,
+        40
+      ]
+    ],
+    "document": null,
+    "assert": {
+      "status": "committed",
+      "seq": 3
+    }
+  },
+  {
+    "name": "P 收到 i1 部分货款 30",
+    "op": "post",
+    "journal_id": "recv-i1-a",
+    "entity": "P",
+    "lines": [
+      [
+        "cash",
+        30,
+        0
+      ],
+      [
+        "receivable",
+        0,
+        30
+      ]
+    ],
+    "document": {
+      "type": "internal_payment",
+      "side": "receipt",
+      "invoice_id": "i1"
+    },
+    "assert": {
+      "status": "committed",
+      "seq": 3
+    }
+  },
+  {
+    "name": "S 支付 i1 部分货款 30",
+    "op": "post",
+    "journal_id": "pay-i1-a",
+    "entity": "S",
+    "lines": [
+      [
+        "payable",
+        30,
+        0
+      ],
+      [
+        "cash",
+        0,
+        30
+      ]
+    ],
+    "document": {
+      "type": "internal_payment",
+      "side": "settlement",
+      "invoice_id": "i1"
+    },
+    "assert": {
+      "status": "committed",
+      "seq": 4
+    }
+  },
+  {
+    "name": "P 卖方 i2 有理利润 10/3",
+    "op": "post",
+    "journal_id": "seller-i2",
+    "entity": "P",
+    "lines": [
+      [
+        "receivable",
+        90,
+        0
+      ],
+      [
+        "revenue",
+        0,
+        90
+      ],
+      [
+        "cost",
+        60,
+        0
+      ],
+      [
+        "inventory",
+        0,
+        60
+      ]
+    ],
+    "document": {
+      "type": "internal_sale",
+      "side": "seller",
+      "invoice_id": "i2",
+      "seller": "P",
+      "buyer": "S",
+      "sku": "Y",
+      "q": 3,
+      "T": 90,
+      "C": 60
+    },
+    "assert": {
+      "seq": 4
+    }
+  },
+  {
+    "name": "S 买方 i2 镜像",
+    "op": "post",
+    "journal_id": "buyer-i2",
+    "entity": "S",
+    "lines": [
+      [
+        "inventory",
+        90,
+        0
+      ],
+      [
+        "payable",
+        0,
+        90
+      ]
+    ],
+    "document": {
+      "type": "internal_sale",
+      "side": "buyer",
+      "invoice_id": "i2",
+      "seller": "P",
+      "buyer": "S",
+      "sku": "Y",
+      "q": 3,
+      "T": 90,
+      "C": 60
+    },
+    "assert": {
+      "seq": 5
+    }
+  },
+  {
+    "name": "P 卖方 i3",
+    "op": "post",
+    "journal_id": "seller-i3",
+    "entity": "P",
+    "lines": [
+      [
+        "receivable",
+        70,
+        0
+      ],
+      [
+        "revenue",
+        0,
+        70
+      ],
+      [
+        "cost",
+        50,
+        0
+      ],
+      [
+        "inventory",
+        0,
+        50
+      ]
+    ],
+    "document": {
+      "type": "internal_sale",
+      "side": "seller",
+      "invoice_id": "i3",
+      "seller": "P",
+      "buyer": "S",
+      "sku": "Z",
+      "q": 2,
+      "T": 70,
+      "C": 50
+    },
+    "assert": {
+      "seq": 5
+    }
+  },
+  {
+    "name": "S 买方 i3 镜像",
+    "op": "post",
+    "journal_id": "buyer-i3",
+    "entity": "S",
+    "lines": [
+      [
+        "inventory",
+        70,
+        0
+      ],
+      [
+        "payable",
+        0,
+        70
+      ]
+    ],
+    "document": {
+      "type": "internal_sale",
+      "side": "buyer",
+      "invoice_id": "i3",
+      "seller": "P",
+      "buyer": "S",
+      "sku": "Z",
+      "q": 2,
+      "T": 70,
+      "C": 50
+    },
+    "assert": {
+      "seq": 6
+    }
+  },
+  {
+    "name": "P 卖方 i4 低价 T<C（负利润）",
+    "op": "post",
+    "journal_id": "seller-i4",
+    "entity": "P",
+    "lines": [
+      [
+        "receivable",
+        30,
+        0
+      ],
+      [
+        "revenue",
+        0,
+        30
+      ],
+      [
+        "cost",
+        50,
+        0
+      ],
+      [
+        "inventory",
+        0,
+        50
+      ]
+    ],
+    "document": {
+      "type": "internal_sale",
+      "side": "seller",
+      "invoice_id": "i4",
+      "seller": "P",
+      "buyer": "S",
+      "sku": "W",
+      "q": 5,
+      "T": 30,
+      "C": 50
+    },
+    "assert": {
+      "seq": 6
+    }
+  },
+  {
+    "name": "S 买方 i4 镜像",
+    "op": "post",
+    "journal_id": "buyer-i4",
+    "entity": "S",
+    "lines": [
+      [
+        "inventory",
+        30,
+        0
+      ],
+      [
+        "payable",
+        0,
+        30
+      ]
+    ],
+    "document": {
+      "type": "internal_sale",
+      "side": "buyer",
+      "invoice_id": "i4",
+      "seller": "P",
+      "buyer": "S",
+      "sku": "W",
+      "q": 5,
+      "T": 30,
+      "C": 50
+    },
+    "assert": {
+      "seq": 7
+    }
+  },
+  {
+    "name": "P 卖方 i5 单边先入账（S 尚未提交）",
+    "op": "post",
+    "journal_id": "seller-i5",
+    "entity": "P",
+    "lines": [
+      [
+        "receivable",
+        60,
+        0
+      ],
+      [
+        "revenue",
+        0,
+        60
+      ],
+      [
+        "cost",
+        35,
+        0
+      ],
+      [
+        "inventory",
+        0,
+        35
+      ]
+    ],
+    "document": {
+      "type": "internal_sale",
+      "side": "seller",
+      "invoice_id": "i5",
+      "seller": "P",
+      "buyer": "S",
+      "sku": "V",
+      "q": 4,
+      "T": 60,
+      "C": 35
+    },
+    "assert": {
+      "seq": 7
+    }
+  },
+  {
+    "name": "登记存货声明 v0（仅覆盖四张双侧齐全发票，r=0 的 i4 不省略）",
+    "op": "register_stock",
+    "version": "stock-v0",
+    "items": {
+      "i1": 2,
+      "i2": 1,
+      "i3": 1,
+      "i4": 0
+    },
+    "assert": {
+      "status": "committed"
+    }
+  },
+  {
+    "name": "登记存货声明 v1（含单边 i5，供待核切面使用）",
+    "op": "register_stock",
+    "version": "stock-v1",
+    "items": {
+      "i1": 2,
+      "i2": 1,
+      "i3": 1,
+      "i4": 0,
+      "i5": 4
+    },
+    "assert": {
+      "status": "committed"
+    }
+  },
+  {
+    "name": "错时：S 缺 i5 镜像，发布必须待核",
+    "op": "publish",
+    "input_id": "ws-pending-i5",
+    "heads": {
+      "P": 7,
+      "S": 7
+    },
+    "stock_version": "stock-v1",
+    "expect_error": {
+      "code": "pending",
+      "issues": [
+        {
+          "issue_type": "missing_side",
+          "details": {
+            "invoice_id": "i5",
+            "missing": [
+              "S"
+            ]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "待核结论同切面复读",
+    "op": "publish",
+    "input_id": "ws-pending-i5",
+    "heads": {
+      "P": 7,
+      "S": 7
+    },
+    "stock_version": "stock-v1",
+    "expect_error": {
+      "code": "pending",
+      "issues": [
+        {
+          "issue_type": "missing_side",
+          "details": {
+            "invoice_id": "i5"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "pending() 读取待核明细",
+    "op": "pending",
+    "input_id": "ws-pending-i5",
+    "remember": "pending-i5"
+  },
+  {
+    "name": "发布旧切面工作底稿（P 前缀 6 排除单边 i5，四张双侧齐全发票）",
+    "op": "publish",
+    "input_id": "ws-old",
+    "heads": {
+      "P": 6,
+      "S": 7
+    },
+    "stock_version": "stock-v0",
+    "remember": "ws-old",
+    "expect_error": null
+  },
+  {
+    "name": "旧底稿声明查询",
+    "op": "statement",
+    "input_id": "ws-old",
+    "assert": {
+      "elimination_kinds": {
+        "intercompany_balance": 4,
+        "intercompany_sale": 4,
+        "unrealized_profit": 3
+      },
+      "entry": {
+        "entry_id": "E003",
+        "kind": "unrealized_profit",
+        "invoice_id": "i1",
+        "lines": {
+          "cost": 20,
+          "inventory": -20
+        }
+      },
+      "final": {
+        "cash": 260,
+        "receivable": 0,
+        "inventory": 30,
+        "payable": 0,
+        "capital": -240,
+        "revenue": -60,
+        "cost": 10
+      }
+    }
+  },
+  {
+    "name": "同 input_id 同切面重试复读旧底稿",
+    "op": "replay_publish",
+    "input_id": "ws-old",
+    "heads": {
+      "P": 6,
+      "S": 7
+    },
+    "stock_version": "stock-v0",
+    "remember": "ws-old",
+    "assert": {
+      "same_as_remembered": "ws-old"
+    }
+  },
+  {
+    "name": "同 input_id 异文（换声明版本）拒绝",
+    "op": "register_stock",
+    "version": "stock-v0-alias",
+    "items": {
+      "i1": 2,
+      "i2": 1,
+      "i3": 1,
+      "i4": 0
+    }
+  },
+  {
+    "name": "异文切面冲突",
+    "op": "publish",
+    "input_id": "ws-old",
+    "heads": {
+      "P": 6,
+      "S": 7
+    },
+    "stock_version": "stock-v0-alias",
+    "expect_error": {
+      "code": "snapshot_conflict"
+    }
+  },
+  {
+    "name": "旧底稿逐项来源可追溯",
+    "op": "sources",
+    "input_id": "ws-old",
+    "assert": {
+      "sources_resolved": {
+        "count": 11
+      }
+    }
+  },
+  {
+    "name": "单张分录来源查询",
+    "op": "sources",
+    "input_id": "ws-old",
+    "entry_id": "E003",
+    "assert": {
+      "sources_resolved": {
+        "count": 1
+      }
+    }
+  },
+  {
+    "name": "P 前缀 3 的总账（部分结算后）",
+    "op": "gl",
+    "entity": "P",
+    "prefix": 3,
+    "assert": {
+      "balances": {
+        "cash": 130,
+        "receivable": 50,
+        "inventory": 0,
+        "revenue": -80,
+        "cost": 40,
+        "capital": -140,
+        "payable": 0
+      }
+    }
+  },
+  {
+    "name": "S 前缀 4 的总账",
+    "op": "gl",
+    "entity": "S",
+    "prefix": 4,
+    "assert": {
+      "balances": {
+        "cash": 130,
+        "receivable": 0,
+        "inventory": 40,
+        "payable": -50,
+        "revenue": -60,
+        "cost": 40,
+        "capital": -100
+      }
+    }
+  },
+  {
+    "name": "按序号取原始凭证",
+    "op": "voucher",
+    "entity": "P",
+    "seq": 2,
+    "assert": {
+      "doc_type": "internal_sale"
+    }
+  },
+  {
+    "name": "非法：末行金额为 0 整笔回滚",
+    "op": "post",
+    "journal_id": "bad-last-line",
+    "entity": "P",
+    "lines": [
+      [
+        "cash",
+        10,
+        0
+      ],
+      [
+        "revenue",
+        0,
+        0
+      ]
+    ],
+    "document": null,
+    "expect_error": {
+      "code": "validation_error"
+    }
+  },
+  {
+    "name": "非法：bool 金额整笔回滚",
+    "op": "post",
+    "journal_id": "bad-bool",
+    "entity": "P",
+    "lines": [
+      [
+        "cash",
+        true,
+        0
+      ],
+      [
+        "revenue",
+        0,
+        1
+      ]
+    ],
+    "document": null,
+    "expect_error": {
+      "code": "validation_error"
+    }
+  },
+  {
+    "name": "非法：未知账户整笔回滚",
+    "op": "post",
+    "journal_id": "bad-account",
+    "entity": "P",
+    "lines": [
+      [
+        "goodwill",
+        10,
+        0
+      ],
+      [
+        "capital",
+        0,
+        10
+      ]
+    ],
+    "document": null,
+    "expect_error": {
+      "code": "validation_error"
+    }
+  },
+  {
+    "name": "非法：借贷不平整笔回滚",
+    "op": "post",
+    "journal_id": "bad-unbalanced",
+    "entity": "P",
+    "lines": [
+      [
+        "cash",
+        10,
+        0
+      ],
+      [
+        "revenue",
+        0,
+        9
+      ]
+    ],
+    "document": null,
+    "expect_error": {
+      "code": "validation_error"
+    }
+  },
+  {
+    "name": "非法：重复行身份整笔回滚",
+    "op": "post",
+    "journal_id": "bad-dup-line",
+    "entity": "P",
+    "lines": [
+      {
+        "line_id": "L1",
+        "account": "cash",
+        "debit": 10,
+        "credit": 0
+      },
+      {
+        "line_id": "L1",
+        "account": "revenue",
+        "debit": 0,
+        "credit": 10
+      }
+    ],
+    "document": null,
+    "expect_error": {
+      "code": "validation_error"
+    }
+  },
+  {
+    "name": "非法：同凭证号异文拒绝",
+    "op": "post",
+    "journal_id": "opening",
+    "entity": "P",
+    "lines": [
+      [
+        "cash",
+        101,
+        0
+      ],
+      [
+        "capital",
+        0,
+        101
+      ]
+    ],
+    "document": null,
+    "expect_error": {
+      "code": "conflict"
+    }
+  },
+  {
+    "name": "非法：同实体同发票重复提交",
+    "op": "post",
+    "journal_id": "seller-i1-dup",
+    "entity": "P",
+    "lines": [
+      [
+        "receivable",
+        80,
+        0
+      ],
+      [
+        "revenue",
+        0,
+        80
+      ],
+      [
+        "cost",
+        40,
+        0
+      ],
+      [
+        "inventory",
+        0,
+        40
+      ]
+    ],
+    "document": {
+      "type": "internal_sale",
+      "side": "seller",
+      "invoice_id": "i1",
+      "seller": "P",
+      "buyer": "S",
+      "sku": "X",
+      "q": 4,
+      "T": 80,
+      "C": 40
+    },
+    "expect_error": {
+      "code": "conflict"
+    }
+  },
+  {
+    "name": "非法：内部收付款累计超 T",
+    "op": "post",
+    "journal_id": "recv-i1-over",
+    "entity": "P",
+    "lines": [
+      [
+        "cash",
+        999,
+        0
+      ],
+      [
+        "receivable",
+        0,
+        999
+      ]
+    ],
+    "document": {
+      "type": "internal_payment",
+      "side": "receipt",
+      "invoice_id": "i1"
+    },
+    "expect_error": {
+      "code": "validation_error"
+    }
+  },
+  {
+    "name": "非法：分录与内部文档不匹配",
+    "op": "post",
+    "journal_id": "bad-sale-lines",
+    "entity": "P",
+    "lines": [
+      [
+        "receivable",
+        81,
+        0
+      ],
+      [
+        "revenue",
+        0,
+        81
+      ],
+      [
+        "cost",
+        40,
+        0
+      ],
+      [
+        "inventory",
+        0,
+        40
+      ]
+    ],
+    "document": {
+      "type": "internal_sale",
+      "side": "seller",
+      "invoice_id": "i9",
+      "seller": "P",
+      "buyer": "S",
+      "sku": "X",
+      "q": 4,
+      "T": 80,
+      "C": 40
+    },
+    "expect_error": {
+      "code": "validation_error"
+    }
+  },
+  {
+    "name": "全部拒绝后 head 不变",
+    "op": "gl",
+    "entity": "P",
+    "assert": {
+      "head": {
+        "P": 7,
+        "S": 7
+      },
+      "balances": {
+        "cash": 130,
+        "receivable": 300,
+        "inventory": -195,
+        "payable": 0,
+        "capital": -140,
+        "revenue": -330,
+        "cost": 235
+      }
+    }
+  },
+  {
+    "name": "同规范重投 opening 复读原 seq",
+    "op": "post",
+    "journal_id": "opening",
+    "entity": "P",
+    "lines": [
+      [
+        "cash",
+        100,
+        0
+      ],
+      [
+        "inventory",
+        40,
+        0
+      ],
+      [
+        "capital",
+        0,
+        140
+      ]
+    ],
+    "document": null,
+    "assert": {
+      "status": "replayed",
+      "seq": 1
+    }
+  },
+  {
+    "name": "重开数据库：真实状态与旧前缀保留",
+    "op": "restart",
+    "assert": {}
+  },
+  {
+    "name": "重开后旧底稿仍可复读",
+    "op": "statement",
+    "input_id": "ws-old",
+    "assert": {
+      "same_as_remembered": "ws-old"
+    }
+  },
+  {
+    "name": "P 卖方 i5 仍在，S 补齐 i5 买方镜像",
+    "op": "post",
+    "journal_id": "buyer-i5",
+    "entity": "S",
+    "lines": [
+      [
+        "inventory",
+        60,
+        0
+      ],
+      [
+        "payable",
+        0,
+        60
+      ]
+    ],
+    "document": {
+      "type": "internal_sale",
+      "side": "buyer",
+      "invoice_id": "i5",
+      "seller": "P",
+      "buyer": "S",
+      "sku": "V",
+      "q": 4,
+      "T": 60,
+      "C": 35
+    },
+    "assert": {
+      "seq": 8
+    }
+  },
+  {
+    "name": "P 卖方 i6（同额不同发票之一）",
+    "op": "post",
+    "journal_id": "seller-i6",
+    "entity": "P",
+    "lines": [
+      [
+        "receivable",
+        50,
+        0
+      ],
+      [
+        "revenue",
+        0,
+        50
+      ],
+      [
+        "cost",
+        20,
+        0
+      ],
+      [
+        "inventory",
+        0,
+        20
+      ]
+    ],
+    "document": {
+      "type": "internal_sale",
+      "side": "seller",
+      "invoice_id": "i6",
+      "seller": "P",
+      "buyer": "S",
+      "sku": "U",
+      "q": 5,
+      "T": 50,
+      "C": 20
+    },
+    "assert": {
+      "seq": 8
+    }
+  },
+  {
+    "name": "S 买方 i6",
+    "op": "post",
+    "journal_id": "buyer-i6",
+    "entity": "S",
+    "lines": [
+      [
+        "inventory",
+        50,
+        0
+      ],
+      [
+        "payable",
+        0,
+        50
+      ]
+    ],
+    "document": {
+      "type": "internal_sale",
+      "side": "buyer",
+      "invoice_id": "i6",
+      "seller": "P",
+      "buyer": "S",
+      "sku": "U",
+      "q": 5,
+      "T": 50,
+      "C": 20
+    },
+    "assert": {
+      "seq": 9
+    }
+  },
+  {
+    "name": "P 卖方 i7（同额不同发票之二）",
+    "op": "post",
+    "journal_id": "seller-i7",
+    "entity": "P",
+    "lines": [
+      [
+        "receivable",
+        50,
+        0
+      ],
+      [
+        "revenue",
+        0,
+        50
+      ],
+      [
+        "cost",
+        25,
+        0
+      ],
+      [
+        "inventory",
+        0,
+        25
+      ]
+    ],
+    "document": {
+      "type": "internal_sale",
+      "side": "seller",
+      "invoice_id": "i7",
+      "seller": "P",
+      "buyer": "S",
+      "sku": "T",
+      "q": 5,
+      "T": 50,
+      "C": 25
+    },
+    "assert": {
+      "seq": 9
+    }
+  },
+  {
+    "name": "S 买方 i7",
+    "op": "post",
+    "journal_id": "buyer-i7",
+    "entity": "S",
+    "lines": [
+      [
+        "inventory",
+        50,
+        0
+      ],
+      [
+        "payable",
+        0,
+        50
+      ]
+    ],
+    "document": {
+      "type": "internal_sale",
+      "side": "buyer",
+      "invoice_id": "i7",
+      "seller": "P",
+      "buyer": "S",
+      "sku": "T",
+      "q": 5,
+      "T": 50,
+      "C": 25
+    },
+    "assert": {
+      "seq": 10
+    }
+  },
+  {
+    "name": "P 收 i6 全额（先错时提交）",
+    "op": "post",
+    "journal_id": "recv-i6",
+    "entity": "P",
+    "lines": [
+      [
+        "cash",
+        50,
+        0
+      ],
+      [
+        "receivable",
+        0,
+        50
+      ]
+    ],
+    "document": {
+      "type": "internal_payment",
+      "side": "receipt",
+      "invoice_id": "i6"
+    },
+    "assert": {
+      "seq": 10
+    }
+  },
+  {
+    "name": "S 只付 i7 全额（i6/i7 同额，制造逐发票错配）",
+    "op": "post",
+    "journal_id": "pay-i7",
+    "entity": "S",
+    "lines": [
+      [
+        "payable",
+        50,
+        0
+      ],
+      [
+        "cash",
+        0,
+        50
+      ]
+    ],
+    "document": {
+      "type": "internal_payment",
+      "side": "settlement",
+      "invoice_id": "i7"
+    },
+    "assert": {
+      "seq": 11
+    }
+  },
+  {
+    "name": "i1 全部结算：P 收尾款 50（结清仍有存货利润）",
+    "op": "post",
+    "journal_id": "recv-i1-b",
+    "entity": "P",
+    "lines": [
+      [
+        "cash",
+        50,
+        0
+      ],
+      [
+        "receivable",
+        0,
+        50
+      ]
+    ],
+    "document": {
+      "type": "internal_payment",
+      "side": "receipt",
+      "invoice_id": "i1"
+    },
+    "assert": {
+      "seq": 11
+    }
+  },
+  {
+    "name": "i1 全部结算：S 付尾款 50",
+    "op": "post",
+    "journal_id": "pay-i1-b",
+    "entity": "S",
+    "lines": [
+      [
+        "payable",
+        50,
+        0
+      ],
+      [
+        "cash",
+        0,
+        50
+      ]
+    ],
+    "document": {
+      "type": "internal_payment",
+      "side": "settlement",
+      "invoice_id": "i1"
+    },
+    "assert": {
+      "seq": 12
+    }
+  },
+  {
+    "name": "S 补付 i6（修复错配）",
+    "op": "post",
+    "journal_id": "pay-i6",
+    "entity": "S",
+    "lines": [
+      [
+        "payable",
+        50,
+        0
+      ],
+      [
+        "cash",
+        0,
+        50
+      ]
+    ],
+    "document": {
+      "type": "internal_payment",
+      "side": "settlement",
+      "invoice_id": "i6"
+    },
+    "assert": {
+      "seq": 13
+    }
+  },
+  {
+    "name": "P 补收 i7（修复错配）",
+    "op": "post",
+    "journal_id": "recv-i7",
+    "entity": "P",
+    "lines": [
+      [
+        "cash",
+        50,
+        0
+      ],
+      [
+        "receivable",
+        0,
+        50
+      ]
+    ],
+    "document": {
+      "type": "internal_payment",
+      "side": "receipt",
+      "invoice_id": "i7"
+    },
+    "assert": {
+      "seq": 12
+    }
+  },
+  {
+    "name": "登记存货声明 v2（覆盖全部七张，r=0 显式保留）",
+    "op": "register_stock",
+    "version": "stock-v2",
+    "items": {
+      "i1": 2,
+      "i2": 1,
+      "i3": 1,
+      "i4": 0,
+      "i5": 4,
+      "i6": 2,
+      "i7": 1
+    },
+    "assert": {
+      "status": "committed"
+    }
+  },
+  {
+    "name": "登记越界声明（r>q，登记形态可过，发布时待核）",
+    "op": "register_stock",
+    "version": "stock-v2-bad",
+    "items": {
+      "i1": 99,
+      "i2": 1,
+      "i3": 1,
+      "i4": 0,
+      "i5": 4,
+      "i6": 2,
+      "i7": 1
+    }
+  },
+  {
+    "name": "新 heads 新声明发布：r 越界待核",
+    "op": "publish",
+    "input_id": "ws-new-bad",
+    "heads": {
+      "P": 12,
+      "S": 13
+    },
+    "stock_version": "stock-v2-bad",
+    "expect_error": {
+      "code": "pending",
+      "issues": [
+        {
+          "issue_type": "stock_out_of_range",
+          "details": {
+            "invoice_id": "i1",
+            "r": 99
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "修复前切面（i6/i7 收付错配）发布待核",
+    "op": "publish",
+    "input_id": "ws-cross",
+    "heads": {
+      "P": 10,
+      "S": 11
+    },
+    "stock_version": "stock-v2",
+    "expect_error": {
+      "code": "pending",
+      "issues": [
+        {
+          "issue_type": "payment_mismatch",
+          "details": {
+            "invoice_id": "i6"
+          }
+        },
+        {
+          "issue_type": "payment_mismatch",
+          "details": {
+            "invoice_id": "i7"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "发布新切面工作底稿",
+    "op": "publish",
+    "input_id": "ws-new",
+    "heads": {
+      "P": 12,
+      "S": 13
+    },
+    "stock_version": "stock-v2",
+    "remember": "ws-new"
+  },
+  {
+    "name": "新底稿独立核验",
+    "op": "verify",
+    "input_id": "ws-new",
+    "assert": {
+      "verified": {
+        "invoices": 7,
+        "entries": 17
+      }
+    }
+  },
+  {
+    "name": "新底稿关键抵销：i1 结清无往来项但仍有存货利润 20",
+    "op": "statement",
+    "input_id": "ws-new",
+    "assert": {
+      "elimination_kinds": {
+        "intercompany_balance": 4,
+        "intercompany_sale": 7,
+        "unrealized_profit": 6
+      },
+      "entry": {
+        "entry_id": "E002",
+        "kind": "unrealized_profit",
+        "invoice_id": "i1",
+        "lines": {
+          "cost": 20,
+          "inventory": -20
+        }
+      },
+      "final": {
+        "cash": 260,
+        "inventory": 68,
+        "payable": 0,
+        "receivable": 0,
+        "capital": -240,
+        "revenue": -60,
+        "cost": -28
+      }
+    }
+  },
+  {
+    "name": "有理利润 i2：10/3",
+    "op": "sources",
+    "input_id": "ws-new",
+    "remember": "src-new"
+  },
+  {
+    "name": "新底稿同切面复读",
+    "op": "replay_publish",
+    "input_id": "ws-new",
+    "heads": {
+      "P": 12,
+      "S": 13
+    },
+    "stock_version": "stock-v2",
+    "remember": "ws-new",
+    "assert": {
+      "same_as_remembered": "ws-new"
+    }
+  },
+  {
+    "name": "新底稿独立核验（复读后）",
+    "op": "verify",
+    "input_id": "ws-new",
+    "assert": {
+      "verified": {
+        "invoices": 7,
+        "entries": 17
+      }
+    }
+  },
+  {
+    "name": "旧底稿在新提交后保持不变",
+    "op": "statement",
+    "input_id": "ws-old",
+    "assert": {
+      "same_as_remembered": "ws-old"
+    }
+  },
+  {
+    "name": "旧底稿仍可独立核验",
+    "op": "verify",
+    "input_id": "ws-old",
+    "assert": {
+      "verified": {
+        "invoices": 4,
+        "entries": 11
+      }
+    }
+  },
+  {
+    "name": "旧前缀 GL 与新前缀 GL 不同且各自平衡",
+    "op": "gl",
+    "entity": "P",
+    "prefix": 7,
+    "assert": {
+      "balances": {
+        "cash": 130,
+        "receivable": 300,
+        "inventory": -195,
+        "payable": 0,
+        "capital": -140,
+        "revenue": -330,
+        "cost": 235
+      }
+    }
+  },
+  {
+    "name": "新前缀 P 总账",
+    "op": "gl",
+    "entity": "P",
+    "assert": {
+      "head": {
+        "P": 12,
+        "S": 13
+      },
+      "balances": {
+        "cash": 280,
+        "receivable": 250,
+        "inventory": -240,
+        "payable": 0,
+        "capital": -140,
+        "revenue": -430,
+        "cost": 280
+      }
+    }
+  },
+  {
+    "name": "新前缀 S 总账",
+    "op": "gl",
+    "entity": "S",
+    "assert": {
+      "balances": {
+        "cash": -20,
+        "receivable": 0,
+        "inventory": 390,
+        "payable": -250,
+        "capital": -100,
+        "revenue": -60,
+        "cost": 40
+      }
+    }
+  }
+]
