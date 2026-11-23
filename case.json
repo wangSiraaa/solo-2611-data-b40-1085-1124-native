@@ -1,0 +1,160 @@
+{
+  "seller": "P",
+  "buyer": "S",
+  "invoice": {
+    "invoice_id": "i1",
+    "seller": "P",
+    "buyer": "S",
+    "sku": "X",
+    "q": 4,
+    "T": 80,
+    "C": 40
+  },
+  "remaining_stock": {
+    "i1": 2
+  },
+  "opening": [
+    {
+      "entity": "P",
+      "journal_id": "opening",
+      "lines": [
+        [
+          "inventory",
+          40,
+          0
+        ],
+        [
+          "capital",
+          0,
+          40
+        ]
+      ],
+      "document": null
+    }
+  ],
+  "seller_journal": {
+    "entity": "P",
+    "journal_id": "seller-i1",
+    "lines": [
+      [
+        "receivable",
+        80,
+        0
+      ],
+      [
+        "revenue",
+        0,
+        80
+      ],
+      [
+        "cost",
+        40,
+        0
+      ],
+      [
+        "inventory",
+        0,
+        40
+      ]
+    ],
+    "document": {
+      "side": "seller",
+      "invoice_id": "i1",
+      "seller": "P",
+      "buyer": "S",
+      "sku": "X",
+      "q": 4,
+      "T": 80,
+      "C": 40
+    }
+  },
+  "buyer_journal": {
+    "entity": "S",
+    "journal_id": "buyer-i1",
+    "lines": [
+      [
+        "inventory",
+        80,
+        0
+      ],
+      [
+        "payable",
+        0,
+        80
+      ]
+    ],
+    "document": {
+      "side": "buyer",
+      "invoice_id": "i1",
+      "seller": "P",
+      "buyer": "S",
+      "sku": "X",
+      "q": 4,
+      "T": 80,
+      "C": 40
+    }
+  },
+  "external_sale": {
+    "entity": "S",
+    "journal_id": "external-sale",
+    "lines": [
+      [
+        "cash",
+        60,
+        0
+      ],
+      [
+        "revenue",
+        0,
+        60
+      ],
+      [
+        "cost",
+        40,
+        0
+      ],
+      [
+        "inventory",
+        0,
+        40
+      ]
+    ],
+    "document": null
+  },
+  "settlements": [
+    {
+      "entity": "P",
+      "journal_id": "receive-i1",
+      "lines": [
+        [
+          "cash",
+          80,
+          0
+        ],
+        [
+          "receivable",
+          0,
+          80
+        ]
+      ],
+      "document": null
+    },
+    {
+      "entity": "S",
+      "journal_id": "pay-i1",
+      "lines": [
+        [
+          "payable",
+          80,
+          0
+        ],
+        [
+          "cash",
+          0,
+          80
+        ]
+      ],
+      "document": null
+    }
+  ]
+}

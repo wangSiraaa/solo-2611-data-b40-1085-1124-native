@@ -1,0 +1,1 @@
+case.json分录每行是[account,debit,credit]，金额为整数分，0代表该侧无金额；一行必须恰一侧大于0。document为null表示普通外部/期初凭证。seller_i1/buyer_i1文档镜像同i1；remaining_stock i1=2是买方尚未售出的件数。external_sale是买方对外售出两件的普通凭证；settlements独立发生，不改变剩余实物数量。材料不含账簿或合并服务代码。
