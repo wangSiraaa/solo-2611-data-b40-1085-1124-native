@@ -1,0 +1,72 @@
+[
+  {
+    "t": 1,
+    "kind": "schedule",
+    "detail": "east 预排 O1（牌T）码 ('K1', 'K2')"
+  },
+  {
+    "t": 2,
+    "kind": "handover_out",
+    "detail": "west 在登记点 HP-1 交出码 ('K1', 'K2')，在途"
+  },
+  {
+    "t": 3,
+    "kind": "return_notice",
+    "detail": "退单到达非持馆 east（码 K1），持馆尚未知，不产生暂停"
+  },
+  {
+    "t": 5,
+    "kind": "handover_in",
+    "detail": "east 接收码 ('K1', 'K2')（模具随组交接）"
+  },
+  {
+    "t": 6,
+    "kind": "authorize",
+    "detail": "east 持具名模具且实物到馆，获得最终授权 O1"
+  },
+  {
+    "t": 7,
+    "kind": "stamp",
+    "detail": "east 真实落印 O1：码 ('K1', 'K2') 永久刻入牌 牌T"
+  },
+  {
+    "t": 8,
+    "kind": "return_processed",
+    "detail": "持馆办理退盘：牌 牌T 销量证明撤回（撤证），码 K1 永久不还"
+  },
+  {
+    "t": 1,
+    "kind": "schedule",
+    "detail": "east 预排 O2（牌U）码 ('K1', 'K2')"
+  },
+  {
+    "t": 2,
+    "kind": "handover_out",
+    "detail": "west 在登记点 HP-1 交出码 ('K1', 'K2')，在途"
+  },
+  {
+    "t": 3,
+    "kind": "handover_in",
+    "detail": "east 接收码 ('K1', 'K2')（模具随组交接）"
+  },
+  {
+    "t": 4,
+    "kind": "authorize",
+    "detail": "east 持具名模具且实物到馆，获得最终授权 O2"
+  },
+  {
+    "t": 5,
+    "kind": "return_notice",
+    "detail": "退单到达非持馆 west（码 K1），持馆尚未知，不产生暂停"
+  },
+  {
+    "t": 6,
+    "kind": "return_processed",
+    "detail": "持馆办理退盘：未刻联号码 K1 撤销资格（整组不拆），暂停其后新刻"
+  },
+  {
+    "t": 6,
+    "kind": "return_processed",
+    "detail": "持馆办理退盘：未刻联号码 K2 撤销资格（整组不拆），暂停其后新刻"
+  }
+]

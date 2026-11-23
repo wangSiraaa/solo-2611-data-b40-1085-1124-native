@@ -1,0 +1,278 @@
+[
+  {
+    "seq": 1,
+    "code": "C01",
+    "pkg_id": "p1",
+    "batch_id": "b1",
+    "store": "S",
+    "original_skus": [
+      "R1"
+    ],
+    "returned_skus": [],
+    "retained_skus": [
+      "R1"
+    ],
+    "sold_qty": 1,
+    "returned_qty": 0,
+    "eligible_releases": [
+      "R1"
+    ],
+    "status": "eligible",
+    "note": "",
+    "prev_hash": "",
+    "entry_hash": "ce9ea47faa78aad5a5414e27b68189529abb9934cfd5c1dddb367e12cc238ef5"
+  },
+  {
+    "seq": 2,
+    "code": "C02",
+    "pkg_id": "p2",
+    "batch_id": "b1",
+    "store": "S",
+    "original_skus": [
+      "R1"
+    ],
+    "returned_skus": [],
+    "retained_skus": [
+      "R1"
+    ],
+    "sold_qty": 1,
+    "returned_qty": 0,
+    "eligible_releases": [
+      "R1"
+    ],
+    "status": "eligible",
+    "note": "",
+    "prev_hash": "ce9ea47faa78aad5a5414e27b68189529abb9934cfd5c1dddb367e12cc238ef5",
+    "entry_hash": "419f2961843987e9c608e2a3b4fffe5579e4559ccf6fd99b2314e6775579fe91"
+  },
+  {
+    "seq": 3,
+    "code": "C03",
+    "pkg_id": "p3",
+    "batch_id": "b1",
+    "store": "S",
+    "original_skus": [
+      "R1"
+    ],
+    "returned_skus": [],
+    "retained_skus": [
+      "R1"
+    ],
+    "sold_qty": 1,
+    "returned_qty": 0,
+    "eligible_releases": [
+      "R1"
+    ],
+    "status": "eligible",
+    "note": "",
+    "prev_hash": "419f2961843987e9c608e2a3b4fffe5579e4559ccf6fd99b2314e6775579fe91",
+    "entry_hash": "7e014013b5cd2add1f5d6cdfcd769d30b8717d50f27e1064f5c3c494677c9021"
+  },
+  {
+    "seq": 4,
+    "code": "C04",
+    "pkg_id": "p4",
+    "batch_id": "b1",
+    "store": "S",
+    "original_skus": [
+      "R1"
+    ],
+    "returned_skus": [],
+    "retained_skus": [
+      "R1"
+    ],
+    "sold_qty": 1,
+    "returned_qty": 0,
+    "eligible_releases": [
+      "R1"
+    ],
+    "status": "eligible",
+    "note": "",
+    "prev_hash": "7e014013b5cd2add1f5d6cdfcd769d30b8717d50f27e1064f5c3c494677c9021",
+    "entry_hash": "1f3172c9c1e422173450f27d8550afd48f28bd878a9ede84cdac70adb67ead72"
+  },
+  {
+    "seq": 5,
+    "code": "C05",
+    "pkg_id": "p5",
+    "batch_id": "b1",
+    "store": "S",
+    "original_skus": [
+      "R1"
+    ],
+    "returned_skus": [],
+    "retained_skus": [
+      "R1"
+    ],
+    "sold_qty": 1,
+    "returned_qty": 0,
+    "eligible_releases": [
+      "R1"
+    ],
+    "status": "eligible",
+    "note": "",
+    "prev_hash": "1f3172c9c1e422173450f27d8550afd48f28bd878a9ede84cdac70adb67ead72",
+    "entry_hash": "bb028a11f860a1b441ca7e7b341d1ad7fd6de80ee957dc6dd5cc878b0195ee0a"
+  },
+  {
+    "seq": 6,
+    "code": "C06",
+    "pkg_id": "p6",
+    "batch_id": "b1",
+    "store": "S",
+    "original_skus": [
+      "R1"
+    ],
+    "returned_skus": [],
+    "retained_skus": [
+      "R1"
+    ],
+    "sold_qty": 1,
+    "returned_qty": 0,
+    "eligible_releases": [
+      "R1"
+    ],
+    "status": "eligible",
+    "note": "",
+    "prev_hash": "bb028a11f860a1b441ca7e7b341d1ad7fd6de80ee957dc6dd5cc878b0195ee0a",
+    "entry_hash": "04b5bd59e5c007d0fe3c27687d1b4d73dba62eced7c607b1c37927fe5e89647f"
+  },
+  {
+    "seq": 7,
+    "code": "C07",
+    "pkg_id": "p7",
+    "batch_id": "b1",
+    "store": "S",
+    "original_skus": [
+      "R1"
+    ],
+    "returned_skus": [],
+    "retained_skus": [
+      "R1"
+    ],
+    "sold_qty": 1,
+    "returned_qty": 0,
+    "eligible_releases": [
+      "R1"
+    ],
+    "status": "eligible",
+    "note": "",
+    "prev_hash": "04b5bd59e5c007d0fe3c27687d1b4d73dba62eced7c607b1c37927fe5e89647f",
+    "entry_hash": "601d33f37b8c2afa95c0f0a7bb1f9480e2e6858c0dae44602fb510a7c98bd75d"
+  },
+  {
+    "seq": 8,
+    "code": "C08",
+    "pkg_id": "p8",
+    "batch_id": "b1",
+    "store": "S",
+    "original_skus": [
+      "R1"
+    ],
+    "returned_skus": [],
+    "retained_skus": [
+      "R1"
+    ],
+    "sold_qty": 1,
+    "returned_qty": 0,
+    "eligible_releases": [
+      "R1"
+    ],
+    "status": "eligible",
+    "note": "",
+    "prev_hash": "601d33f37b8c2afa95c0f0a7bb1f9480e2e6858c0dae44602fb510a7c98bd75d",
+    "entry_hash": "ab114c935de2f0b11ad264057ae0ab240c278c1a544f00655f561311e9c2727c"
+  },
+  {
+    "seq": 9,
+    "code": "C09",
+    "pkg_id": "p9",
+    "batch_id": "b1",
+    "store": "S",
+    "original_skus": [
+      "R1R"
+    ],
+    "returned_skus": [],
+    "retained_skus": [
+      "R1R"
+    ],
+    "sold_qty": 1,
+    "returned_qty": 0,
+    "eligible_releases": [
+      "R1R"
+    ],
+    "status": "eligible",
+    "note": "",
+    "prev_hash": "ab114c935de2f0b11ad264057ae0ab240c278c1a544f00655f561311e9c2727c",
+    "entry_hash": "0783cd70722853e19272b7f72f278359c2243f349e5c5f62b04c76b9fd7c3f45"
+  },
+  {
+    "seq": 10,
+    "code": "C10",
+    "pkg_id": "p10",
+    "batch_id": "b1",
+    "store": "S",
+    "original_skus": [
+      "R1R"
+    ],
+    "returned_skus": [],
+    "retained_skus": [
+      "R1R"
+    ],
+    "sold_qty": 1,
+    "returned_qty": 0,
+    "eligible_releases": [
+      "R1R"
+    ],
+    "status": "eligible",
+    "note": "",
+    "prev_hash": "0783cd70722853e19272b7f72f278359c2243f349e5c5f62b04c76b9fd7c3f45",
+    "entry_hash": "1852c30a60c9fed99a56607398a5a6b10b76b353a49f1f937403f49227becedc"
+  },
+  {
+    "seq": 11,
+    "code": "C11",
+    "pkg_id": "p11",
+    "batch_id": "b1",
+    "store": "S",
+    "original_skus": [
+      "R2"
+    ],
+    "returned_skus": [],
+    "retained_skus": [
+      "R2"
+    ],
+    "sold_qty": 1,
+    "returned_qty": 0,
+    "eligible_releases": [
+      "R2"
+    ],
+    "status": "eligible",
+    "note": "",
+    "prev_hash": "1852c30a60c9fed99a56607398a5a6b10b76b353a49f1f937403f49227becedc",
+    "entry_hash": "0895213dd2f2bcb38ce32283ebfcf9bc17689f242d35ba97f03b6d29f4fa121a"
+  },
+  {
+    "seq": 12,
+    "code": "C12",
+    "pkg_id": "p12",
+    "batch_id": "b1",
+    "store": "S",
+    "original_skus": [
+      "R2"
+    ],
+    "returned_skus": [],
+    "retained_skus": [
+      "R2"
+    ],
+    "sold_qty": 1,
+    "returned_qty": 0,
+    "eligible_releases": [
+      "R2"
+    ],
+    "status": "eligible",
+    "note": "",
+    "prev_hash": "0895213dd2f2bcb38ce32283ebfcf9bc17689f242d35ba97f03b6d29f4fa121a",
+    "entry_hash": "a1b0d11217727bc7386204b4f1d4bdb6f31a966b7665ecf109db76469a0819c9"
+  }
+]

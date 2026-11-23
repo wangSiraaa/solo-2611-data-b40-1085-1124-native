@@ -1,0 +1,97 @@
+[
+  {
+    "seq": 1,
+    "code": "C-A1",
+    "pkg_id": "p1",
+    "batch_id": "b1",
+    "store": "S",
+    "original_skus": [
+      "RA1"
+    ],
+    "returned_skus": [],
+    "retained_skus": [
+      "RA1"
+    ],
+    "sold_qty": 1,
+    "returned_qty": 0,
+    "eligible_releases": [
+      "RA1"
+    ],
+    "status": "eligible",
+    "note": "",
+    "prev_hash": "",
+    "entry_hash": "ca5cc2a870c1f689d153d68795ed21161c3cd1b9d590dde858c38b64dd6ddc73"
+  },
+  {
+    "seq": 2,
+    "code": "C-B1",
+    "pkg_id": "p2",
+    "batch_id": "b1",
+    "store": "S",
+    "original_skus": [
+      "RB1"
+    ],
+    "returned_skus": [],
+    "retained_skus": [
+      "RB1"
+    ],
+    "sold_qty": 1,
+    "returned_qty": 0,
+    "eligible_releases": [
+      "RB1"
+    ],
+    "status": "eligible",
+    "note": "",
+    "prev_hash": "ca5cc2a870c1f689d153d68795ed21161c3cd1b9d590dde858c38b64dd6ddc73",
+    "entry_hash": "79f0d4cf5bbe416808ee248dcfe01bb875d32f730e0876173ab9a4c69a147b37"
+  },
+  {
+    "seq": 3,
+    "code": "C-K1",
+    "pkg_id": "p3",
+    "batch_id": "b1",
+    "store": "S",
+    "original_skus": [
+      "RA1",
+      "RB1"
+    ],
+    "returned_skus": [],
+    "retained_skus": [
+      "RA1",
+      "RB1"
+    ],
+    "sold_qty": 2,
+    "returned_qty": 0,
+    "eligible_releases": [
+      "RA1",
+      "RB1"
+    ],
+    "status": "eligible",
+    "note": "",
+    "prev_hash": "79f0d4cf5bbe416808ee248dcfe01bb875d32f730e0876173ab9a4c69a147b37",
+    "entry_hash": "7b3070410a50aa3b9a9072d29c61d71f27f62853e71ac356bd0f9de1d34dfaf5"
+  },
+  {
+    "seq": 4,
+    "code": "C-K2",
+    "pkg_id": "p4",
+    "batch_id": "b1",
+    "store": "S",
+    "original_skus": [
+      "RA1",
+      "RB1"
+    ],
+    "returned_skus": [
+      "RA1",
+      "RB1"
+    ],
+    "retained_skus": [],
+    "sold_qty": 2,
+    "returned_qty": 2,
+    "eligible_releases": [],
+    "status": "revoked",
+    "note": "整包退尽，无盘可作证",
+    "prev_hash": "7b3070410a50aa3b9a9072d29c61d71f27f62853e71ac356bd0f9de1d34dfaf5",
+    "entry_hash": "3b2b2205a0060607804f65c3836cf4ce6792e05add153135b5d26f584dfdce58"
+  }
+]

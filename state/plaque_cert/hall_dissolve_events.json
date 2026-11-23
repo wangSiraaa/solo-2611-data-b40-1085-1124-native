@@ -1,0 +1,52 @@
+[
+  {
+    "t": 2,
+    "kind": "dissolve",
+    "detail": "联号组 LG-Y 解除，码 ('M1', 'M2') 成为独立码，可单独换馆"
+  },
+  {
+    "t": 3,
+    "kind": "schedule",
+    "detail": "west 预排 O3b（牌V）码 ('M1',)"
+  },
+  {
+    "t": 4,
+    "kind": "authorize",
+    "detail": "west 持具名模具且实物到馆，获得最终授权 O3b"
+  },
+  {
+    "t": 5,
+    "kind": "stamp",
+    "detail": "west 真实落印 O3b：码 ('M1',) 永久刻入牌 牌V"
+  },
+  {
+    "t": 6,
+    "kind": "return_processed",
+    "detail": "持馆办理退盘：牌 牌V 销量证明撤回（撤证），码 M1 永久不还"
+  },
+  {
+    "t": 7,
+    "kind": "handover_out",
+    "detail": "west 在登记点 HP-1 交出码 ('M2',)，在途"
+  },
+  {
+    "t": 8,
+    "kind": "handover_in",
+    "detail": "east 接收码 ('M2',)（模具随组交接）"
+  },
+  {
+    "t": 9,
+    "kind": "schedule",
+    "detail": "east 预排 O4（牌W）码 ('M2',)"
+  },
+  {
+    "t": 10,
+    "kind": "authorize",
+    "detail": "east 持具名模具且实物到馆，获得最终授权 O4"
+  },
+  {
+    "t": 11,
+    "kind": "stamp",
+    "detail": "east 真实落印 O4：码 ('M2',) 永久刻入牌 牌W"
+  }
+]
