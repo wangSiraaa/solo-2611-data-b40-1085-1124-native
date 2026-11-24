@@ -13,6 +13,28 @@ from .service import ProfileOverlapService
 from .library import AuditLibrary, AuditRejected, AuditInputError
 from .verifier import verify_report
 from .runner import OperationRunner, load_motions, load_profile_revision
+from .exhibit import (
+    BrushPlan,
+    Desk,
+    ExhibitError,
+    Hall,
+    SessionSheet,
+    SimResult,
+    Wipe,
+    WipeSlot,
+    Zone,
+    earliest_switch_start,
+    judge_switch,
+    naive_tick_routes,
+    simulate,
+)
+from .exhibit_store import (
+    ExhibitLibrary,
+    ExhibitRejected,
+    build_payload,
+    run_exhibit,
+    verify_exhibit,
+)
 
 __all__ = [
     "fraction",
@@ -35,4 +57,22 @@ __all__ = [
     "OperationRunner",
     "load_motions",
     "load_profile_revision",
+    "Zone",
+    "Hall",
+    "BrushPlan",
+    "Wipe",
+    "WipeSlot",
+    "SessionSheet",
+    "SimResult",
+    "simulate",
+    "Desk",
+    "ExhibitError",
+    "judge_switch",
+    "earliest_switch_start",
+    "naive_tick_routes",
+    "ExhibitLibrary",
+    "ExhibitRejected",
+    "build_payload",
+    "run_exhibit",
+    "verify_exhibit",
 ]
