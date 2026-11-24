@@ -54,7 +54,41 @@ python3.11 -m unittest tests -v         # 32 个测试（含 500 副本/1000 票
 library/db.py       SQLite schema、显式事务、操作指纹、回执与版本计数器
 library/catalog.py  修订快照、边校验/环检测、多跳规范解析、拆别名、目录查询
 library/ledger.py   票据、prepare/commit、reserve、pickup、release、公开查询
+library/kaleido.py  万花筒芯：扇区表→花谱约束、制谱台询证、装配/拨动综合、巡展承诺
 library/system.py   门面与重开（LibrarySystem.reopen）
 demo.py             材料严格重放 + 拆别名/环拒绝/过期重选/幂等/重开场景
+demo_kaleido.py     单筒工单、校错见证、卡锁、同槽争色询证、巡展尾签、共用库存
 tests.py            unittest 测试与规模验证
+test_kaleido.py     万花筒求解层测试
 ```
+
+## 万花筒芯（`library/kaleido.py`）
+
+在 `library` 的书目归并/副本/回执之上新增的求解层，不改动目录与台账的不变量。
+
+- **物理模型**：槽分近层 `("N", i)` / 远层 `("F", i)`，每槽一种色珠或留空；
+  视线近→远，**近层有珠就遮掉远层**，可见色 = 第一个非空槽。花谱 `Chart`
+  可有多种**安装朝向**；多谱/两眼必须由**同一组槽内实珠**解释。
+- **`ChartDesk.ask`**：对“指定槽是否必为某色”回答 **必定 / 可能 / 抵触**，
+  并给可复看的**装芯例**（possible 还带反例）。抵触时给出最小冲突谱组与争同槽的色。
+- **`synthesize`**：在谱、工单、拨动表下综合**装配单 + 拨动次序**；无解时区分
+  `color_conflict`（同槽争色）、`motion_conflict`（近层被卡锁住）、`perception_conflict`。
+- **`exhibition_plan` / `max_single_core` / `max_spare_cores`**：巡展两种交付——
+  A 只封一枚芯、B 备用芯现场换整筒。只在**具体装芯**上计数：未装芯的“也许红也许蓝”
+  封筒后只剩一色，不算两种可兑现；B 方案按**真实珠子跨芯不重复**核验，库存被借走
+  则相应尾签失去可承诺资格。
+- **`Workshop`**：按领到副本的**扇区表**取谱（`attach_sector_table` / `charts_for`），
+  共用的实珠库存按装配扣减（`commit_assembly`，同一枚珠不能进两枚芯），
+  询证/综合/交付均落可复看的回执。
+
+### 演示结论（`demo_kaleido.py`）
+
+| 场景 | 结果 |
+| --- | --- |
+| 单筒 近盘两槽、起位红、拨一步蓝 | 装配 近0=red,近1=blue，依次演红、蓝，可交 |
+| 第二张见证校为红 | `color_conflict`：近1 同时被要蓝与红，蓝段不成 |
+| 恢复见证、只把近盘卡在起位 | `motion_conflict`：近层锁死，第二步仍只见槽0 |
+| 两局部谱分别可装、合芯争槽0 | 各单独 certain；同芯 `contradiction`，冲突槽 近0（红/蓝） |
+| 巡展 红尾/蓝尾、红蓝各一珠、两空筒 | 单封芯至多承诺 1 尾；备用芯可同时承诺 {红尾,蓝尾} |
+| 临借走唯一蓝珠 | 蓝尾失去可承诺资格，最大集合 {红尾} |
+

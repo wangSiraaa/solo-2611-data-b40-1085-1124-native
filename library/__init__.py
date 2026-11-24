@@ -7,6 +7,33 @@
 """
 
 from .errors import IdempotencyConflict, LibraryError, Rejection
+from .kaleido import (
+    Chart,
+    ChartDesk,
+    Geometry,
+    Observation,
+    ProgramStep,
+    RotationPlan,
+    Tail,
+    Workshop,
+    exhibition_plan,
+    synthesize,
+)
 from .system import LibrarySystem
 
-__all__ = ["LibrarySystem", "LibraryError", "Rejection", "IdempotencyConflict"]
+__all__ = [
+    "LibrarySystem",
+    "LibraryError",
+    "Rejection",
+    "IdempotencyConflict",
+    "Chart",
+    "ChartDesk",
+    "Geometry",
+    "Observation",
+    "ProgramStep",
+    "RotationPlan",
+    "Tail",
+    "Workshop",
+    "synthesize",
+    "exhibition_plan",
+]
