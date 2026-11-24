@@ -1,11 +1,16 @@
-# 可修订加权记录源与可重复加权采样
+# 可修订加权记录源、可重复加权采样与贴纸厂/换卡柜共用程序
 
-本仓库实现两个可独立运行的模块：
+本仓库实现四个可独立运行的模块：
 
 - `python -m wrsource.source`：SQLite 支撑的可修订加权记录源，稳定 `row_id`、
   分组、权重 1..100、正文、递增修订号、不可变源版本快照与固定版本分页。
 - `python -m wrsource.dataset`：可重复的加权采样数据集生产器，全量构建、按变更
   清单增量刷新、真实 JSONL + manifest 输出与对照源 API 的校验。
+- `python -m wrsource.tape`：制带室的连印带推断，从**确实入样**的拆包回条核出
+  能共同解释全部回条的（带型、起格、方向），并查同一未开包在不同解释下的整组
+  内容。
+- `python -m wrsource.counter`：换卡柜的保证单办理，在只看回条信念、不预看印带
+  的前提下，穷举 AND-OR 搜索能事先签下的最多册数，输出可照办的办理树与逐笔台账。
 
 另一个模块 `wrsource/sampling.py` 只负责**精确**抽样键算术与选择；`wrsource/reference.py`
 是测试用的小集合独立参考实现。没有模型训练，也没有人工标注界面。
@@ -143,6 +148,68 @@ O(1) 的 float 快路，只在极近时回退 Decimal 与大整数幂。`cut` �
 `hash_hex`，并做一次同版本全量重建比对身份、顺序与真实正文。因此**每行都从源
 API 回查验证**，而不是只写抽样元数据。
 
+## 制带室：连印带推断（`wrsource/tape.py`）
+
+### 模型
+
+- `TapePattern`：一圈固定具名格位，每格一张完整卡面（图案 + 亮/普面）；所有候选
+  带共用同一环长。
+- `Hypothesis = (带型, 起格, 方向)`：一班只有**一个未知起格、一个前进方向**
+  （正向格号递增绕回 / 反向递减绕回）。包序 `p`、包内第 `s` 张落在
+  `(起格 + 方向 * (p * 每包张数 + s)) mod 环长`。
+- `Receipt`：来自确实入样开包人的回条，注明包序、包内第几张，以及“看到的图”或
+  “亮/普面”至少其一；构造 `TapeRoom` 时可用 `sampled_pack_indices` 强制回条只能
+  来自样本目录中的包。
+
+### 推断规则
+
+`TapeRoom.feasible_hypotheses(...)` 枚举候选解释，要求**同一个**（带型、起格、
+方向）同时满足每一张回条——不同包不能各挑一个有利起格。回条撤回/新增通过
+`with_receipts` / `add_receipt` / `retract_receipt` 换一版不可变制带室；
+`Belief.pack_outcomes(pack)` 返回同一未开包在当前全部解释下的整组内容（去重），
+`filter_belief` 用开包实卡收缩信念。
+
+## 换卡柜：保证单与办理树（`wrsource/counter.py`）
+
+### 柜面语义
+
+- 每本册子的空位要求具名卡（指定图、指定亮/普面）；一换一清单 `SwapRule` 允许把
+  柜台真牌对调成目标卡，**每次对调占一个换权**，用掉不退还。
+- 未拆包带包号、只可拆 `max_opens` 次；每开一包才看到整包实物，之后才决定下一包
+  开哪号。规划器只依据与回条相容的 `Belief` 推进，开包是**机会结点**：每个可能
+  观察都要有能继续兑现的分支，因此无法预看没开包的印带。
+- 两种柜制：
+  - **即换**：当场交真牌、换入牌马上装册，占一个换权，户随即离柜。
+  - **押换**：户主离柜前把双方两张具名实卡封入唯一押柜格（`Escrow`），占一个
+    换权；约定包揭出指定图案才成交，落空则原卡退还、换权释放。封着的卡不能转押
+    或提前贴册；全柜只有一格押柜。
+- 客户带 `departs_before_pack` 离柜拍点：离柜后只能结算已入押信封，不能新办交易。
+- 保证单在拆包前开给具名册号；`plan_max` 按册数从大到小枚举册子集，对每个子集做
+  穷举 AND-OR 搜索，返回能在**每一种合法包况**下补齐同一组册的最大集合。
+
+### 为什么是 AND-OR 穷举
+
+确定性动作（贴册、清单对调、即换、押换）是 OR 结点，任选一个能通向胜利即可；
+开包是 AND 结点，该包在当前信念下的每种整组内容都必须通向胜利。状态按
+（剩余空位、持有卡号、空闲换权号、客户在场位、押柜、已开包、当前信念解释集）
+记忆化；资源（卡、换权、开包次数）单调消耗，搜索必然终止。规模按题目约束
+（≤ 6 包、≤ 3 册的小册演示）设计，枚举即证明，不依赖启发式。
+
+### 台账与追查
+
+`OrderRunner` 按办理树在指定世界（一条可行解释）下重放，`OrderLedger` 逐笔记录
+`slip_issued / listed_swap / instant_swap / escrow_placed / escrow_settled /
+escrow_failed / pack_opened / mount / order_completed`。柜员可按单号查开包前
+承诺给谁（`commitment`）、按原卡号查重卡去向（`card_trace`，含对调衍生卡）、
+按换权号查占用与释放（`right_trace`）、按册号查实卡装册记录（`album_destination`）。
+
+### 共用 JSON 规格
+
+制带室与柜台吃同一份规格：顶层放 `patterns / receipts / pack_size / constraints`
+（可限定 `start_cells` 与 `directions`），`counter` 段放册号、缺卡清单、持牌、
+换权、一换一清单、换卡户、可拆包号与拆包次数。`build_from_spec` 先建信念再建
+规划器，并拒绝把已有回条的已开包递给柜台。
+
 ## 代码结构
 
 ```
@@ -150,13 +217,20 @@ wrsource/
   sampling.py   精确键、比较器、top-quota、边界证书（无 I/O）
   source.py     版本化源服务 + 分页 + CLI（可独立运行）
   dataset.py    全量构建 / 增量刷新 / 校验 + CLI（可独立运行）
+  tape.py       连印带推断、回条信念、未开包包况（无 I/O）
+  counter.py    保证单 AND-OR 规划、押换/即换、台账 + CLI
   reference.py  测试用独立精确参考实现
 tests/
   test_sampling.py  键构造、双向一致性、极近键、边界证书、参考对照
   test_source.py    原子批次、折叠、修订号、分片移动、分页并发、重启
   test_dataset.py   全量/参考对照、零/超名额、正文版本、分片不变性、
                     并行一致、撤回首名补位、改组、增量==全量、篡改检测、重开
-demo/run_demo.py    端到端演示（含 --large 10 万行）
+  test_tape.py      回条共同解释、亮面回条、撤回重开信念、多样本目录闸、
+                    多卡包、反向、往返序列化
+  test_counter.py   题面例 1/2、押换 vs 即换、入押许可/离柜反事实、
+                    自适应开包、亮面区分、台账卡号/换权追查、共用规格
+demo/run_demo.py            源 + 采样端到端演示（含 --large 10 万行）
+demo/run_counter_demo.py    制带室 + 换卡柜三例端到端演示
 ```
 
 ## 运行
@@ -186,6 +260,10 @@ python3 -m wrsource.dataset refresh --db src.sqlite --old ds_v1 \
     --new-version 2 --out ds_v2
 python3 -m wrsource.dataset verify --db src.sqlite --dataset ds_v2
 python3 -m wrsource.dataset compare --a ds_v2 --b ds_v2_full
+
+# 制带室 + 换卡柜（共用一份 JSON 规格，见 demo/_work/counter_spec.json）
+python3 demo/run_counter_demo.py
+python3 -m wrsource.counter plan --spec counter_spec.json --out plan.json
 ```
 
 规模验证：10 万行、100 组、每组 quota 1000（合计 10 万样本）时，写入约 2s，
