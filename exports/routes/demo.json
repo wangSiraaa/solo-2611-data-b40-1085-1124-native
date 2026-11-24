@@ -1,0 +1,139 @@
+[
+  {
+    "title": "甲线分级（臂展2）",
+    "payload": {
+      "grade": 2,
+      "paths": [
+        {
+          "steps": [
+            [
+              "L",
+              "jia.Ls",
+              "jia.Lf"
+            ],
+            [
+              "R",
+              "jia.Rs",
+              "jia.Rf"
+            ]
+          ]
+        },
+        {
+          "steps": [
+            [
+              "R",
+              "jia.Rs",
+              "jia.Rf"
+            ],
+            [
+              "L",
+              "jia.Ls",
+              "jia.Lf"
+            ]
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "title": "甲线移出开放右顶点页",
+    "payload": {
+      "gradable": false,
+      "reason": "missing_hold:jia.Rf"
+    }
+  },
+  {
+    "title": "甲/乙同轮：共用左起点 vs 私有左起点",
+    "payload": {
+      "shared_start": {
+        "ok": false,
+        "by_group": {},
+        "grades": {},
+        "reason": "undeclared_shared_hold"
+      },
+      "private_start": {
+        "ok": true,
+        "by_group": {
+          "A": "甲",
+          "B": "乙"
+        },
+        "grades": {
+          "A": 2,
+          "B": 2
+        },
+        "reason": null
+      }
+    }
+  },
+  {
+    "title": "中继观察签等分线",
+    "payload": {
+      "grades": {
+        "bare_shortcut": 1,
+        "with_observation": 2
+      },
+      "same_beat_safe": false,
+      "required_gap": 2,
+      "cover_feasible": {
+        "covers": {
+          "LEFT": [
+            "obs.yi"
+          ],
+          "RIGHT": [
+            "obs.jia"
+          ]
+        },
+        "size": 2
+      },
+      "cover_after_removing_right_yi": null,
+      "relay_two_usable_beats": {
+        "feasible": true,
+        "start_beats": {
+          "LEFT": 0,
+          "RIGHT": 2
+        },
+        "first_move_beats": {
+          "LEFT": 1,
+          "RIGHT": 3
+        },
+        "reason": null,
+        "detail": {}
+      }
+    }
+  },
+  {
+    "title": "第二号改迟至同时出手后",
+    "payload": {
+      "ok": false,
+      "reason": "number_arrived_too_late:G2",
+      "records": [
+        {
+          "group_id": "G1",
+          "number": 0,
+          "arrival_beat": 0,
+          "first_move_beat": 1,
+          "valid": true
+        },
+        {
+          "group_id": "G2",
+          "number": 0,
+          "arrival_beat": 5,
+          "first_move_beat": 1,
+          "valid": false
+        }
+      ]
+    }
+  },
+  {
+    "title": "同线不同臂展的分级",
+    "payload": {
+      "grades_by_span": {
+        "1": null,
+        "2": 3,
+        "3": 2,
+        "4": 2,
+        "5": 2
+      }
+    }
+  }
+]

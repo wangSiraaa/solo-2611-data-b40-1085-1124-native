@@ -1,0 +1,27 @@
+{
+  "route_id": "jia",
+  "name": "甲线",
+  "range_citation_id": "C_RANGE",
+  "pinned_citation_id": "C_SIGNS",
+  "start": [
+    {
+      "volume_id": "JIA",
+      "page_id": "Ls"
+    },
+    {
+      "volume_id": "JIA",
+      "page_id": "Rs"
+    }
+  ],
+  "finish": [
+    {
+      "volume_id": "JIA",
+      "page_id": "Lf"
+    },
+    {
+      "volume_id": "JIA",
+      "page_id": "Rf"
+    }
+  ],
+  "arm_span": 2
+}

@@ -1,0 +1,36 @@
+{
+  "holds": [
+    {
+      "volume_id": "JIA",
+      "page_id": "Ls",
+      "x": 0,
+      "y": 0,
+      "color": "chalk",
+      "hands": "L"
+    },
+    {
+      "volume_id": "JIA",
+      "page_id": "Rs",
+      "x": 1,
+      "y": 0,
+      "color": "chalk",
+      "hands": "R"
+    },
+    {
+      "volume_id": "JIA",
+      "page_id": "Lf",
+      "x": 0,
+      "y": 1,
+      "color": "tape",
+      "hands": "L"
+    },
+    {
+      "volume_id": "JIA",
+      "page_id": "Rf",
+      "x": 1,
+      "y": 1,
+      "color": "tape",
+      "hands": "R"
+    }
+  ]
+}

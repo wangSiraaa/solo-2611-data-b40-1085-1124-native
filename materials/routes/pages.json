@@ -1,0 +1,35 @@
+{
+  "format": "volume-pages/1",
+  "revision": 1,
+  "volumes": [
+    {
+      "volume_id": "JIA",
+      "pages": [
+        {
+          "page_id": "Ls",
+          "section_id": "holds",
+          "label": "1",
+          "active": true
+        },
+        {
+          "page_id": "Rs",
+          "section_id": "holds",
+          "label": "2",
+          "active": true
+        },
+        {
+          "page_id": "Lf",
+          "section_id": "holds",
+          "label": "3",
+          "active": true
+        },
+        {
+          "page_id": "Rf",
+          "section_id": "holds",
+          "label": "4",
+          "active": true
+        }
+      ]
+    }
+  ]
+}
