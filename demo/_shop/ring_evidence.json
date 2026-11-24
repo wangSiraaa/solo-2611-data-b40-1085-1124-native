@@ -1,0 +1,31 @@
+{
+  "cycle": [
+    "x",
+    "y",
+    "z",
+    "x"
+  ],
+  "evidence": [
+    {
+      "over": "y",
+      "preferred": "x",
+      "ticket_row_ids": [
+        "ring-1"
+      ]
+    },
+    {
+      "over": "z",
+      "preferred": "y",
+      "ticket_row_ids": [
+        "ring-2"
+      ]
+    },
+    {
+      "over": "x",
+      "preferred": "z",
+      "ticket_row_ids": [
+        "ring-3"
+      ]
+    }
+  ]
+}

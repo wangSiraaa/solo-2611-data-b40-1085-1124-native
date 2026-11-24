@@ -1,0 +1,108 @@
+{
+  "budget": 100,
+  "cheapest": null,
+  "feasible": [],
+  "infeasible": [
+    {
+      "box_cost": 0,
+      "boxes": [],
+      "feasible": false,
+      "first_failed_buyer": "小林",
+      "mode": "restock",
+      "reservation_fee": 0,
+      "reservations": [],
+      "restock_execute_fee": 0,
+      "restock_order_fee": 3,
+      "restock_rights": [
+        {
+          "execute_fee": 4,
+          "order_fee": 3,
+          "right_id": "right-yi",
+          "variety": "乙"
+        }
+      ],
+      "total_cost": 3,
+      "within_budget": true,
+      "witness": [
+        {
+          "buyer": "小林",
+          "called_right": null,
+          "note": "no visible acceptable pack available",
+          "options": [],
+          "pack_id": null,
+          "picked": null,
+          "shelf": [],
+          "source": "none",
+          "step": 0,
+          "visible": [
+            "甲",
+            "乙"
+          ]
+        }
+      ]
+    },
+    {
+      "box_cost": 10,
+      "boxes": [
+        "B-case"
+      ],
+      "feasible": false,
+      "first_failed_buyer": "小齐",
+      "mode": "restock",
+      "reservation_fee": 0,
+      "reservations": [],
+      "restock_execute_fee": 0,
+      "restock_order_fee": 3,
+      "restock_rights": [
+        {
+          "execute_fee": 4,
+          "order_fee": 3,
+          "right_id": "right-yi",
+          "variety": "乙"
+        }
+      ],
+      "total_cost": 13,
+      "within_budget": true,
+      "witness": [
+        {
+          "buyer": "小林",
+          "called_right": null,
+          "note": "",
+          "options": [
+            "乙",
+            "甲"
+          ],
+          "pack_id": "B-case#p00",
+          "picked": "乙",
+          "shelf": [
+            "乙",
+            "甲"
+          ],
+          "source": "public",
+          "step": 0,
+          "visible": [
+            "甲",
+            "乙"
+          ]
+        },
+        {
+          "buyer": "小齐",
+          "called_right": null,
+          "note": "no visible acceptable pack available",
+          "options": [],
+          "pack_id": null,
+          "picked": null,
+          "shelf": [
+            "甲"
+          ],
+          "source": "none",
+          "step": 1,
+          "visible": [
+            "乙"
+          ]
+        }
+      ]
+    }
+  ],
+  "mode": "restock"
+}

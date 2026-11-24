@@ -1,0 +1,23 @@
+{
+  "added": [],
+  "affected_groups": [
+    "g-lin"
+  ],
+  "changed": [
+    "t-lin-1"
+  ],
+  "changed_row_ids": [
+    "t-lin-1"
+  ],
+  "new_version": 3,
+  "old_version": 2,
+  "removed": [],
+  "rescanned_groups": [
+    "g-lin"
+  ],
+  "reused_groups": [
+    "g-qi"
+  ],
+  "seed_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+  "selected_total": 2
+}

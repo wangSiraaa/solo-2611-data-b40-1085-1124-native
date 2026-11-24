@@ -1,0 +1,84 @@
+[
+  {
+    "contradictions": 0,
+    "mode": "plain",
+    "order_id": 1,
+    "pickups": [
+      {
+        "buyer": "小林",
+        "pack_id": "case-1#p01",
+        "source": "public",
+        "step": 0,
+        "variety": "甲"
+      },
+      {
+        "buyer": "小齐",
+        "pack_id": "case-1#p00",
+        "source": "public",
+        "step": 1,
+        "variety": "乙"
+      }
+    ],
+    "source_version": 1,
+    "ticket_row_ids": [
+      "t-lin-1",
+      "t-qi-1"
+    ]
+  },
+  {
+    "contradictions": 0,
+    "mode": "plain",
+    "order_id": 2,
+    "pickups": [],
+    "source_version": 2,
+    "ticket_row_ids": [
+      "t-lin-1",
+      "t-qi-1"
+    ]
+  },
+  {
+    "contradictions": 0,
+    "mode": "reserve",
+    "order_id": 3,
+    "pickups": [
+      {
+        "buyer": "小林",
+        "pack_id": "B-case#p01",
+        "source": "public",
+        "step": 0,
+        "variety": "甲"
+      },
+      {
+        "buyer": "小齐",
+        "pack_id": "B-case#p00",
+        "source": "reserved",
+        "step": 1,
+        "variety": "乙"
+      }
+    ],
+    "source_version": 6,
+    "ticket_row_ids": [
+      "b-lin-unknown",
+      "b-qi-yi"
+    ]
+  },
+  {
+    "contradictions": 1,
+    "mode": "restock",
+    "order_id": 4,
+    "pickups": [
+      {
+        "buyer": "小林",
+        "pack_id": "B-case#p00",
+        "source": "public",
+        "step": 0,
+        "variety": "乙"
+      }
+    ],
+    "source_version": 6,
+    "ticket_row_ids": [
+      "b-lin-unknown",
+      "b-qi-yi"
+    ]
+  }
+]

@@ -8,5 +8,5 @@ Two independently runnable modules live in this package:
 The implementation intentionally uses only the Python 3.11 standard library.
 """
 
-__all__ = ["source", "sampling", "dataset"]
-__version__ = "1.0.0"
+__all__ = ["source", "sampling", "dataset", "receipts", "cabinet", "ledger"]
+__version__ = "1.1.0"

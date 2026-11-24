@@ -1,0 +1,16 @@
+[
+  {
+    "buyer": "小林",
+    "pack_id": "case-1#p01",
+    "source": "public",
+    "step": 0,
+    "variety": "甲"
+  },
+  {
+    "buyer": "小齐",
+    "pack_id": "case-1#p00",
+    "source": "public",
+    "step": 1,
+    "variety": "乙"
+  }
+]

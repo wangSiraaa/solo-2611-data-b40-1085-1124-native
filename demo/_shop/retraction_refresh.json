@@ -1,0 +1,32 @@
+{
+  "added": [
+    "ring-1",
+    "ring-2",
+    "ring-3"
+  ],
+  "affected_groups": [
+    "g-lin",
+    "g-ring"
+  ],
+  "changed": [],
+  "changed_row_ids": [
+    "ring-1",
+    "ring-2",
+    "ring-3",
+    "t-lin-1"
+  ],
+  "new_version": 5,
+  "old_version": 3,
+  "removed": [
+    "t-lin-1"
+  ],
+  "rescanned_groups": [
+    "g-lin",
+    "g-ring"
+  ],
+  "reused_groups": [
+    "g-qi"
+  ],
+  "seed_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+  "selected_total": 2
+}

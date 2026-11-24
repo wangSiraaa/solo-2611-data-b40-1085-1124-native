@@ -1,11 +1,18 @@
-# 可修订加权记录源与可重复加权采样
+# 可修订加权记录源、可重复加权采样与试饮柜接单
 
-本仓库实现两个可独立运行的模块：
+本仓库在两个基础模块之上实现试饮小铺的接单、偏好推断与发包规划：
 
 - `python -m wrsource.source`：SQLite 支撑的可修订加权记录源，稳定 `row_id`、
   分组、权重 1..100、正文、递增修订号、不可变源版本快照与固定版本分页。
 - `python -m wrsource.dataset`：可重复的加权采样数据集生产器，全量构建、按变更
   清单增量刷新、真实 JSONL + manifest 输出与对照源 API 的校验。
+- `wrsource/receipts.py`：试购小票正文模式与**偏好台**。只允许采样器实际选中的
+  小票作证，回答“两个品种谁必在前、是否都有可能、有没有成环的矛盾票据”。
+- `wrsource/cabinet.py`：试饮日发包柜。整箱上架、按到场次序取包，支持普通开柜、
+  开门前实名保底分包、公开货架 + 隔壁补货权两种开店方式，对所有相容偏好做鲁棒
+  兑现规划，输出最便宜全兑单或每种可承担单子的真实失约经过。
+- `wrsource/ledger.py`：接单/取包台账（追加式 SQLite）。重开昨日单号即可独立复读
+  当时入样的票与实际交出的包；事后勘误若与已发包矛盾，只记矛盾事件，不改取货。
 
 另一个模块 `wrsource/sampling.py` 只负责**精确**抽样键算术与选择；`wrsource/reference.py`
 是测试用的小集合独立参考实现。没有模型训练，也没有人工标注界面。
@@ -143,6 +150,74 @@ O(1) 的 float 快路，只在极近时回退 Decimal 与大整数幂。`cut` �
 `hash_hex`，并做一次同版本全量重建比对身份、顺序与真实正文。因此**每行都从源
 API 回查验证**，而不是只写抽样元数据。
 
+## 试饮小票与偏好台（`wrsource/receipts.py`）
+
+小票就是加权源行的 JSON 正文：
+
+```json
+{"buyer": "小林", "visible": ["甲", "乙"], "picked": "甲"}
+```
+
+每位虚构买家有一份固定但未知的**严格品种次序**，总挑当时可见品种里最喜欢的一款，
+因此一张票给出约束 `picked > v`（对所有其他可见品种）。偏好台只从数据集
+`samples.jsonl` 的入样记录构建（`PreferenceDesk.from_records`），源里未入样的行
+永远不作证。
+
+- 约束按买家分别保存，并合并成一张台面总图。`must_precede / can_precede /
+  relation` 默认回答总图，也可传 `buyer=` 只看某人的证据。
+- `find_cycle / cycle_evidence` 用 DFS 找有向环并给出每条边的小票 `row_id`
+  出处；单张票自身永远可满足，多张票合并后才可能成环。
+- `possible_picks(buyer, options)` 给试饮柜使用：在某买家的约束下，当前货架上
+  哪些品种**有可能**成为他的首选（等价于“该品种压过其余选项”这组附加边仍可
+  拓扑排序）。
+- `witness_order / compatible_orders` 给出可满足的严格次序实例，供测试与复读。
+
+## 试饮柜（`wrsource/cabinet.py`）
+
+静态输入：品种表、若干真实封箱（每箱品种数量与价钱固定）、每位买家的可见货架、
+到场次序与可接受清单、总预算。开门前只能整箱上架；开门后买家按次序取一包。公共
+货架只能因真实交包（或补货到达）而变化，后来的预约不能临时藏货。
+
+三种 `mode`，后两种与题目两种开店方式对应，且共用同一预算、可接受清单与可见记录：
+
+- `plain`：无保底分包、无补货权。
+- `reserve`：开门前可按预约从整箱分出实名保底包，每包收一次分包工费；保底包离开
+  公共货架，只能在该买家到场时交给他，其余人从公共余量挑。
+- `restock`：维持公开货架，可持有具名品种补货权。每份权只能叫一次，**在某买家
+  取包之后才能叫，下一位挑完后才到**（`restock_arrival_delay >= 2`，规划器强制），
+  因此永远救不了当前步或紧接着的下一位；买权收订补费，叫权收执行费，已发包不可
+  撤销。
+
+规划器 `CabinetEngine.evaluate()` 枚举封箱子集（题目规模至多六箱，共 64 种），对
+每种箱单跑对抗式记忆化 DFS：每个买家当前可见、可接受且在架的品种，经偏好台
+`possible_picks` 收窄后，**每一个相容首选都必须能走完当天**；补货模式下店铺在取包
+后选择“不叫 / 叫一份权”的最便宜鲁棒动作。报告：
+
+- 能对所有相容偏好全兑的箱单按总成本升序，`cheapest` 即最低总成本（箱价 + 分包工费
+  + 订补费 + 最坏分支保证执行费）；
+- 每个预算内但不能保证全兑的箱单附一段真实失约经过 `witness`：逐步货架、可选项、
+  实际取走的包 ID、叫权记录与 `first_failed_buyer`。
+- `execute(plan, orders)` 用固定严格次序跑一条真实当日线，返回可落盘的
+  `Handover`；无法兑现时抛 `CabinetFailure` 并携带此前全部交包。
+
+## 接单与取包台账（`wrsource/ledger.py`）
+
+追加式 SQLite，两张主表：
+
+- `orders / order_tickets`：接单时冻结数据集目录、源版本、seed、名额与**当时实际
+  入样的小票**（含正文摘要），柜台据此接新箱单；
+- `events`：只追加的时间线，含 `pickup`（具体包 ID）、`correction`（事后勘误）、
+  `contradiction`（新证据与已发包冲突）、`failure`、`note`。
+
+勘误与已发货记录意见相反时，`record_correction(..., contradicts_pack=...)` 追加一条
+不可变矛盾事件，**不改写任何取货**。`reopen_order(order_id)` 不依赖当前源内容，
+独立返回昨日用的票与实际交出的包。CLI：
+
+```bash
+python -m wrsource.ledger orders --db ledger.sqlite
+python -m wrsource.ledger reopen --db ledger.sqlite --order-id 1
+```
+
 ## 代码结构
 
 ```
@@ -150,13 +225,21 @@ wrsource/
   sampling.py   精确键、比较器、top-quota、边界证书（无 I/O）
   source.py     版本化源服务 + 分页 + CLI（可独立运行）
   dataset.py    全量构建 / 增量刷新 / 校验 + CLI（可独立运行）
+  receipts.py   小票模式、偏好台（必在前/都可能/成环、相容首选）
+  cabinet.py    封箱与买家模型、两种开店方式、鲁棒规划、失约经过、执行回放
+  ledger.py     追加式接单/取包台账 + 矛盾留痕 + CLI
   reference.py  测试用独立精确参考实现
 tests/
-  test_sampling.py  键构造、双向一致性、极近键、边界证书、参考对照
-  test_source.py    原子批次、折叠、修订号、分片移动、分页并发、重启
-  test_dataset.py   全量/参考对照、零/超名额、正文版本、分片不变性、
-                    并行一致、撤回首名补位、改组、增量==全量、篡改检测、重开
-demo/run_demo.py    端到端演示（含 --large 10 万行）
+  test_sampling.py    键构造、双向一致性、极近键、边界证书、参考对照
+  test_source.py      原子批次、折叠、修订号、分片移动、分页并发、重启
+  test_dataset.py     全量/参考对照、零/超名额、正文版本、分片不变性、
+                      并行一致、撤回首名补位、改组、增量==全量、篡改检测、重开
+  test_receipts.py    小票校验、偏好问答、成环与逐买家隔离、相容次序
+  test_cabinet.py     普通/保底/补货三方式、鲁棒对抗分支、费用、失约经过、规模界
+  test_shop_ledger.py 接单重开、追加顺序、矛盾不改取货、跨进程持久化
+  test_shop_flow.py   源->采样->偏好台->柜->台账端到端、勘误、撤回补位、两种开店
+demo/run_demo.py          原有源 + 采样端到端演示
+demo/run_shop_demo.py     试饮柜两场验收演示（落盘 samples 与发放清单）
 ```
 
 ## 运行
@@ -165,7 +248,10 @@ demo/run_demo.py    端到端演示（含 --large 10 万行）
 # 测试
 python3 -m unittest discover -s tests -v
 
-# 演示（小规模 / 10 万行）
+# 试饮柜演示（两场验收，产物在 demo/_shop）
+python3 demo/run_shop_demo.py
+
+# 原有演示（小规模 / 10 万行）
 python3 demo/run_demo.py
 python3 demo/run_demo.py --large --parallel
 

@@ -1,0 +1,55 @@
+{
+  "budget": 100,
+  "cheapest": {
+    "box_cost": 10,
+    "boxes": [
+      "B-case"
+    ],
+    "feasible": true,
+    "first_failed_buyer": null,
+    "mode": "reserve",
+    "reservation_fee": 2,
+    "reservations": [
+      {
+        "buyer": "小齐",
+        "fee": 2,
+        "pack_id": "B-case#p00",
+        "variety": "乙"
+      }
+    ],
+    "restock_execute_fee": 0,
+    "restock_order_fee": 0,
+    "restock_rights": [],
+    "total_cost": 12,
+    "within_budget": true,
+    "witness": []
+  },
+  "feasible": [
+    {
+      "box_cost": 10,
+      "boxes": [
+        "B-case"
+      ],
+      "feasible": true,
+      "first_failed_buyer": null,
+      "mode": "reserve",
+      "reservation_fee": 2,
+      "reservations": [
+        {
+          "buyer": "小齐",
+          "fee": 2,
+          "pack_id": "B-case#p00",
+          "variety": "乙"
+        }
+      ],
+      "restock_execute_fee": 0,
+      "restock_order_fee": 0,
+      "restock_rights": [],
+      "total_cost": 12,
+      "within_budget": true,
+      "witness": []
+    }
+  ],
+  "infeasible": [],
+  "mode": "reserve"
+}
