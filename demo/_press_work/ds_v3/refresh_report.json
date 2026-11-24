@@ -1,0 +1,21 @@
+{
+  "added": [],
+  "affected_groups": [
+    "practice"
+  ],
+  "changed": [
+    "card-001"
+  ],
+  "changed_row_ids": [
+    "card-001"
+  ],
+  "new_version": 3,
+  "old_version": 2,
+  "removed": [],
+  "rescanned_groups": [
+    "practice"
+  ],
+  "reused_groups": [],
+  "seed_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+  "selected_total": 10
+}
