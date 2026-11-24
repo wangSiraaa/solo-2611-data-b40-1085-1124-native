@@ -13,6 +13,10 @@ obsdelivery/
   public.py         公开产品/交付文档 + 独立读回校验
   storage.py        SQLite schema（不可变表 + 显式事务）
   demo.py           跑 materials/739 + J0/J1
+  twist.py          逐段余捻台账（累计读数、回拨、夹向；逐段溯源）
+  ropes.py          实纱轴、段区间、逐寸闭区间配对（原值精确）
+  workshop.py       两处裁台：备单、剪单、运输/独占票、争寸与实物号审计
+  rope_demo.py      跑 materials/rope 的整条纱线场景
 tests/              精确断言、失败原子性、规模测试
 ```
 
@@ -22,6 +26,8 @@ tests/              精确断言、失败原子性、规模测试
 python3 -m obsdelivery.demo          # 人读输出
 python3 -m obsdelivery.demo --json   # 结构化输出
 python3 -m obsdelivery.demo --db /tmp/obs.sqlite
+python3 -m obsdelivery.rope_demo     # 纱线 / 裁台场景
+python3 -m obsdelivery.rope_demo --json
 python3 -m pytest -q                  # 需 pytest；用 venv 安装即可
 ```
 
@@ -128,3 +134,65 @@ reader 值与状态一致性。
 测试覆盖 5000 观测（1000 样品 × 5 版）、100 个参考版本、单次 1000 样品的
 语义产品与交付，以及独立读回校验；本地全部 < 2 秒。不做概率统计、浮点求和
 或硬件异常模拟。
+
+---
+
+## 7. 逐段余捻台账（`twist.py`）
+
+每支纱从标记起按等长小段退捻，传感器在相邻段**共用**的端点记累计转数。
+
+```
+点 j：adjusted_j = (raw_j - backoff_j) * (-1 if flip_j else +1)
+段 i（点 i-1..i）：residual_i = adjusted_i - adjusted_{i-1}
+```
+
+* 读数一律从真实 32 位位型精确解码为 `Fraction`，不用宿主浮点。
+* `backoff` 是换夹头不动纱的回拨量，从读数扣掉；`flip` 是调换夹向的变号。
+* **缺读（`bits=None`）或非有限（NaN/±Inf）**只让**跨该点**的段不可签，
+  其余段照常还原（`Segment.signable` 逐段给出原因）。
+* `ledger.provenance(i)` 只重算第 i 段的来由，不评估整张单。
+* `ledger.verify()` / `verify_ledger(readings, ledger)` 从**原始位型**重建
+  核对；`print_residual` 只为印单机产出十进制（可能舍入），带
+  `authoritative=False`，`verify_against_original` 明确“不得拿回印数字作复验”。
+
+## 8. 配对与裁台（`ropes.py`、`workshop.py`）
+
+* `Axis`：一支实纱各寸余捻（可正可负）。`Span`：一段连续段，`TAIL` 仅把段序
+  倒转；两个 **不同轴** 的等长段逐寸相加，要求每寸落在**闭区间** `[lo,hi]`。
+  同一寸不能同时给两根纱（同轴即拒绝）。
+* `Workshop` 有两处裁台。备单（`PrepOrder`）可共用未裁线段；可临时期消、
+  换轴（`swap_axis`）、补登夹向（`supplement_clamp_direction`，整轴取反）；
+  另一台可正持旧备料。
+* **剪单只有被本班计划判为 `CUT_NOW` 才可执行**；直接 `cut()` 也会重新
+  走 `plan_shift`。`evaluate()` 给出逐寸原值判定；两张剪单争同一寸时，
+  由 `priority()`（申领班、到达序、id）取最小者 `CUT_NOW`，其余 `WAIT`，
+  材料不成立者 `BLOCKED`。剪去的寸**永久失效**（`consumed`），取消备单
+  无法把它变回来。
+* 对外承诺选**独占票**：两张限班独占票都到当班裁台、且 `valid_shift` 等于
+  本班，才服从该剪单；未释放的已发票区间不能再发。运输（结扎备料对、交轴
+  耗一班、在途不可取料、改结扎须取回实轴）作为备选路径，两轴确已到场才
+  生效。每台首剪前只能交接一次（`handover`）；首剪后只有具名实物半段，
+  退回按**实际余长**再分配（`remaining_pieces` / `reallocate_returned`）。
+* `bench_cut_rights()` 与 `audit_physical_exclusivity()` 按实物号
+  `yarn#inch` 复查：没有一寸交给两根纱。
+
+`python3 -m obsdelivery.rope_demo` 实测（`materials/rope/input.json`，真实位型）：
+
+* 甲累计 `0,2,1` → 余捻 `2,−1`；乙 `0,−2,−1` → `−2,1`；从正头并，逐寸 `0,0`，可签。
+* 仅把乙中间读数改为 `−1`（`0,−1,−1` → `−1,0`）：全段总数仍为 `1+(−1)=0`
+  正好抵消，但逐寸 `1,−1` 不合格 → 不签。
+* 恢复原读数、改为乙从尾搭：倒序后 `1,−2`，逐寸 `3,−3` → 不签。
+* 甲中段（+1）原可配乙或丙（各 −1）；乙补登夹向后变 +1，甲+乙不成立，
+  甲+丙仍成立 → 把该寸剪给丙，甲已被剪的寸对乙永久失效；取消旧备单也
+  不能把已交的线变回。两处裁台实物号分别为 `bench-1` 与 `bench-2` 各得其寸，
+  审计无冲突。
+* 两张小绳争同一寸：先到者 `cut_now`，另一台 `wait`，抢剪被拒；先到者剪后
+  该寸永久失效，后者 `blocked`。
+* 晚一班到的单：两轴独占票准时到手即按票下剪；若一票作废，或两票都过期
+  （看似同单却 `valid_shift` 不符），手头旧票也不能剪。
+
+## 9. 规模
+
+`rope_demo` 与 `tests/test_twist.py`、`test_ropes.py`、`test_workshop.py`、
+`test_rope_demo.py` 用真实位型与精确有理数逐条断言上述行为。
+

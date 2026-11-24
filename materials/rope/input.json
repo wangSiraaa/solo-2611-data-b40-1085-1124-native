@@ -1,0 +1,108 @@
+{
+  "description": "Real float32 boundary readings (cumulative revolutions) for five axes, each <= 8 inches. Residuals (per inch) are differences of consecutive boundary readings. Fixture records backoff/flip default to none.",
+  "format": "each axis: yarn_id, axis_id, per-inch residuals (exact small integers), and cumulative boundary bit patterns (8 hex digits).",
+  "axes": [
+    {
+      "yarn_id": "J",
+      "axis_id": "J",
+      "length": 8,
+      "residuals": [
+        "2",
+        "-1",
+        "1",
+        "1",
+        "1",
+        "1",
+        "0",
+        "0"
+      ],
+      "cumulative_bits": [
+        "00000000",
+        "40000000",
+        "3f800000",
+        "40000000",
+        "40400000",
+        "40800000",
+        "40a00000",
+        "40a00000",
+        "40a00000"
+      ]
+    },
+    {
+      "yarn_id": "Y",
+      "axis_id": "Y",
+      "length": 8,
+      "residuals": [
+        "-2",
+        "1",
+        "-1",
+        "-1",
+        "-1",
+        "-1",
+        "0",
+        "0"
+      ],
+      "cumulative_bits": [
+        "00000000",
+        "c0000000",
+        "bf800000",
+        "c0000000",
+        "c0400000",
+        "c0800000",
+        "c0a00000",
+        "c0a00000",
+        "c0a00000"
+      ]
+    },
+    {
+      "yarn_id": "A",
+      "axis_id": "A",
+      "length": 8,
+      "residuals": [
+        "0",
+        "1",
+        "1",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "cumulative_bits": [
+        "00000000",
+        "00000000",
+        "3f800000",
+        "40000000",
+        "40000000",
+        "40000000",
+        "40000000",
+        "40000000",
+        "40000000"
+      ]
+    },
+    {
+      "yarn_id": "B",
+      "axis_id": "B",
+      "length": 1,
+      "residuals": [
+        "-1"
+      ],
+      "cumulative_bits": [
+        "00000000",
+        "bf800000"
+      ]
+    },
+    {
+      "yarn_id": "C",
+      "axis_id": "C",
+      "length": 1,
+      "residuals": [
+        "-1"
+      ],
+      "cumulative_bits": [
+        "00000000",
+        "bf800000"
+      ]
+    }
+  ]
+}
