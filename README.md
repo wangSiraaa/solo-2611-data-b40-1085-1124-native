@@ -131,13 +131,41 @@ C_RANGE usable V1/p2,V1/p3,V1/p4 -
 
 ```
 citation_system/   实现源码（catalog / repository / export / dependency / cli）
+                   + wind（风廊推断）与 docking（停靠规划）
 tests/             52 个单元与集成测试（含随机不变量与目标规模）
 scripts/demo_726.py        端到端展示，逐步保留旧导出
 scripts/benchmark_726.py   目标规模基准
+scripts/demo_1105.py       风廊推断 + 停靠工单展示
 exports/scenario/  演示产生的各步骤导出（旧目录保留）
 exports/cli_run/   按 materials 原始输入走完整 CLI 的导出
 work/              运行的 SQLite 数据库
 ```
+
+## 风廊与停靠台（task 1105，构建在页序目录/引用仓之上）
+
+在原有目录 + 引用仓之上增加两座引擎，均不改动既有表结构与导出格式：
+
+- **风廊推断（`citation_system/wind.py`）**：把 RANGE 引用读成一次校准飞行
+  （当前在用的区间内页逐个记「风带 + 逗留拍数」），把 PINNED 引用读成固定
+  出发/接球单。飞行总漂移 `Σ 逗留×风档` 须等于实测总位移（精确或闭区间），
+  风档为 `[-2,2]` 整数、整场一致；同带可多次进入，只累加逗留。
+  - 区间中间插一实页 → 该飞行逗留增加（`flights_from_catalog` 自动体现）。
+  - 端页挂起 → 该飞行 `usable=False`，被要求时整份推断 `withheld`（暂缓发图）。
+  - 无解时给出**最小冲突集**（去掉任一成员即可恢复解）。
+  - 实测位移放在引用的 `origin["displacement"]`（`{"exact":n}` 或
+    `{"min":a,"max":b}`），无需迁移数据库。
+- **停靠规划（`citation_system/docking.py`）**：每拍可在相邻层升降或留层，再
+  按该层风漂移；约定拍末须对准指定站/备用站，末拍上接球架。核心区分：
+  - **固定导轨**（`rail_schedule`/`rail_feasible`）：开演前装定、全部转层时刻
+    与方向冻结、不耗筹、**无法对刻线反应**——必须对*所有*候选风同时成立。
+  - **可搬推杆**（`rod_plan`/`rod_feasible`）：按实际所见移层、每次耗本台一
+    筹、可在刻线处按观测分支——能兑现固定导轨最多只能兑现一组的两组候选风。
+  - **双台工单**（`plan_dual`/`plan_rail`/`plan_rod`）：给出装导轨的最迟拍，
+    或推杆与筹送到哪一台、最迟何时送达（`handoff_ticks` 为转交拍数）。
+
+`python3 scripts/demo_1105.py` 复原四则算例并打印工单；测试见
+`tests/test_wind_and_docking.py`（17 项，含首组 `(1,2)→(1,1)`、双候选风、
+导轨/推杆兑现差异、交接时限）。
 
 ## 不做什么
 
