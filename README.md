@@ -131,13 +131,38 @@ C_RANGE usable V1/p2,V1/p3,V1/p4 -
 
 ```
 citation_system/   实现源码（catalog / repository / export / dependency / cli）
-tests/             52 个单元与集成测试（含随机不变量与目标规模）
+tests/             66 个单元与集成测试（含随机不变量、真实导出与柜台工作流）
 scripts/demo_726.py        端到端展示，逐步保留旧导出
 scripts/benchmark_726.py   目标规模基准
 exports/scenario/  演示产生的各步骤导出（旧目录保留）
 exports/cli_run/   按 materials 原始输入走完整 CLI 的导出
 work/              运行的 SQLite 数据库
 ```
+
+## 旧当簿清理与出柜方案（`pawn.py` / `counter.py`）
+
+- **能否只取怀表**：取决于该物自身仍有效的解押门槛。同一笔债可以同时押怀表和
+  印盒；若怀表的门槛是“本债本金不超过 2”，而印盒要求清户，则本金降到 2 时
+  怀表可出、印盒仍须留存。
+- **整数旧账重放**：`PawnLedger.replay()` 按 `(volume_id, seq)` 重放每页。每页
+  一个唯一 `operation_id`，支持立债、加费、续当缴款、押物和解押条款；金额只能是
+  非负整数，缴费先补费用再还本金，超出部分以 `refund` 退给具名付款人。
+- **固定签记**：普通操作的签记必须是可用 **PINNED** 引用，并包含当前物证页；
+  停用页、非 PINNED、引用不含本页或重复使用的签记都会使该页成为无效旧流水。
+  无效页保留在结果中，不能由后一页补合法。
+- **解押条款**：支持 `full_debt`（本债/所列债全清）和 `principal_cap`
+  （所列债费用为零且本金合计不超过门槛）。`item_status()` 为每件物列出所有仍有效
+  的门槛、负责人、物证页和当前是否满足。RANGE 条款按真实导出的当前区间判断，端页
+  失效即进入待处理，原端点不交换。
+- **柜台方案**：本题只实现“有截止的保留”，不实现担保单。`CounterOffice` 把票、物、
+  钱柜和债权绑定到具体分柜；整张票不可拆分给两笔债，找零只从该柜零钱出。票一旦收进
+  钱柜、物一旦签领，都只通过不可逆状态推进，数据库回滚不会当成实物退回。
+- **隔离与最坏责任**：`before_tickets` 班可先揭封，隔离时整单拒接且不收票；
+  `after_first_ticket` 班在首票不可退后才看到第二柜，客户未同意部分成交或补偿时，
+  `plan_redemption(..., require_full_delivery_guarantee=True)` 必须直接拒绝保证。
+- 目标规模为最多 6 笔债、8 件物、10 张票。`tests/test_pawn_counter.py` 用真实
+  `export.collect_products()` / JSONL 导出覆盖端页失效、重复签领、页序改变、找零、
+  联署权、两柜隔离和不可逆签领。
 
 ## 不做什么
 
