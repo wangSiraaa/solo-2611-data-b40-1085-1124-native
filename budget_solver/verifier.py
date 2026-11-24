@@ -85,12 +85,12 @@ def independent_block_solve(equations, closure, scc_partition, topo_index):
     for cid in block_ids:
         members = [v for v in scc_partition[cid] if v in closure_set]
         local = {v: i for i, v in enumerate(members)}
+        # 参数列同样必须按真正的自由参数（表达式 parts 的键）建立；见 solver 注释。
         upstream = set()
         for v in members:
             for ref in equations[v][0]:
                 if ref not in local and known[ref][0] == "expr":
-                    upstream.add(ref)
-                    free_params.update(known[ref][2].keys())
+                    upstream.update(known[ref][2].keys())
         upstream = sorted(upstream)
         free_params.update(upstream)
 

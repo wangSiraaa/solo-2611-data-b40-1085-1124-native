@@ -388,6 +388,52 @@ def test_self_reference_cell():
         shutil.rmtree(tmp)
 
 
+# ------------------------------------------- 跨块自由参数传播（回归）
+def test_cross_block_parameter_propagation():
+    """回归：上游自由参数经中间格跨块传播时列不能错位成全零。
+
+    构造：r0 为自由根；A=1·r0，B=1·r0，C=2·r0。探针格 A−B 与 A−C。
+    正确结果：A−B 恒为 0（determined 0），A−C = −r0 仍自由（parametric）。
+    旧实现按“被引用的上游格名”建参数列，却以真正参数名写入，导致 A−C 被
+    误判为 determined 0。
+    """
+    service, tmp = fresh_service()
+    try:
+        payload = {
+            "model_id": "M_PROP",
+            "name": "跨块参数传播",
+            "cells": {
+                "r0": {"kind": "formula", "constant": "0",
+                       "terms": [{"coef": "1", "cell_id": "r0"}]},
+                "A": {"kind": "formula", "constant": "0",
+                      "terms": [{"coef": "1", "cell_id": "r0"}]},
+                "B": {"kind": "formula", "constant": "0",
+                      "terms": [{"coef": "1", "cell_id": "r0"}]},
+                "C": {"kind": "formula", "constant": "0",
+                      "terms": [{"coef": "2", "cell_id": "r0"}]},
+                "dAB": {"kind": "formula", "constant": "0",
+                        "terms": [{"coef": "1", "cell_id": "A"},
+                                  {"coef": "-1", "cell_id": "B"}]},
+                "dAC": {"kind": "formula", "constant": "0",
+                        "terms": [{"coef": "1", "cell_id": "A"},
+                                  {"coef": "-1", "cell_id": "C"}]},
+            },
+            "outputs": ["dAB", "dAC"],
+        }
+        artifact, _, _ = publish_and_compile(service, payload)
+        report = service.solve(artifact)
+        q_ab = service.query(report["solve_id"], "M_PROP::dAB")
+        q_ac = service.query(report["solve_id"], "M_PROP::dAC")
+        check(q_ab["status"] == "determined" and q_ab["value"] == "0",
+              "跨块传播：A−B 恒为 0（唯一确定）")
+        check(q_ac["status"] == "parametric",
+              "跨块传播：A−C=−r0 仍为自由参数（不被误判为 0）")
+        check(service.verify_solve(report["solve_id"])["ok"],
+              "跨块传播：参数表达式独立验证通过")
+    finally:
+        shutil.rmtree(tmp)
+
+
 def run_all():
     tests = [
         test_unique_cycle,
@@ -401,6 +447,7 @@ def run_all():
         test_reopen_reports,
         test_no_floating_point_anywhere,
         test_self_reference_cell,
+        test_cross_block_parameter_propagation,
     ]
     for test in tests:
         test()

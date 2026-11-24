@@ -149,7 +149,10 @@ def solve_closure(artifact, closure):
     for cid in block_ids:
         members = [v for v in components[cid]["variables"] if v in closure_set]
         local_index = {v: i for i, v in enumerate(members)}
-        # 收集上游参数（出现在本块方程里、已被分类为表达式/自由的格）
+        # 收集上游参数列。注意参数列必须是**真正的自由参数**（表达式 parts 的键），
+        # 而不是被引用的上游格名：上游格本身可能是另一个参数的表达式，若按格名
+        # 建列，本块写入的却是参数名，列会错位成全零，导致“本可确定/本为自由”
+        # 被误判成常数。这里把全部上游表达式所依赖的自由参数合并成列集合。
         upstream_params = set()
         for v in members:
             for ref_var in artifact["equations"][v]["coeffs"]:
@@ -157,8 +160,7 @@ def solve_closure(artifact, closure):
                     continue
                 info = known[ref_var]
                 if info[0] == "expr":
-                    upstream_params.add(ref_var)
-                    free_params.update(info[2].keys())
+                    upstream_params.update(info[2].keys())
         upstream_params = sorted(upstream_params)
         free_params.update(upstream_params)
 
