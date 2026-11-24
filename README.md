@@ -136,6 +136,49 @@ failing record's start offset. A partial import cannot be published as
 whole-stream complete. There is no resynchronisation: the scanner never scans
 forward for a plausible tag.
 
+## Pigeon-racing review (`pigeon/`)
+
+Built on the repository above: a racing-pigeon clock record directory
+(`schemas/pigeon_clock_v1.json` — 棚号 loft, 门 gate, 时刻 time, 开闭
+open/close, 读环 ring read, 空环 explicit empty ring), imported from real byte
+streams, plus the adjudication layers:
+
+* `pigeon/book.py` — the whole-loft clock book. Only a `close` (合) marks a
+  beam crossing; a close on the exit beam records one official arrival. Ring
+  reads are tri-state: named (antenna at that cross-section), missing field
+  (只知道有鸽 — some competing pigeon), explicit null (the non-competing
+  empty-ring model). Every event keeps the absolute byte range of its source
+  record. A truncated tail is never a sealed loft: only a `complete` import
+  seals the book.
+* `pigeon/engine.py` — enumerates every whole-loft homing history compatible
+  with all beams and antennas: the entry channel is a FIFO queue, one pigeon
+  per crossing, each competing pigeon arrives at most once per flight. A beam
+  that is locally explainable does not replace the queue order. Bounded at six
+  pigeons / twelve crossings.
+* `pigeon/certificate.py` — the team speed certificate: both designated
+  pigeons must arrive before loft close with distance/time at the team
+  threshold in *every* compatible history (盖章 stamp), fail in all (撤证
+  revoke), otherwise 待核 pending with two opposing whole-loft witnesses.
+  Team receipts reveal only the team's ruling, the covering public beam
+  numbers and the ruling basis; opponents' rings are anonymised while two
+  named witnesses are kept for internal review. Mutually exclusive evaluations
+  can be cross-checked on the spot for whether their witnesses can be
+  simultaneously true.
+* `pigeon/review.py` — review organisation. This meet runs **joint hearings**
+  (联合听证): the clock room holds the unique films, opens at most one per
+  beat, and one film's discovery may serve several applications; the scheduler
+  is minimax over all compatible development outcomes (开片前不能预知显影值)
+  to maximise rulings delivered within their deadlines. A distributed
+  team-seat kernel (named developing rights issued before the hearing, one
+  parallel opening per seat per beat, rights and opened originals
+  non-transferable, foreign rings shown only as 外队) is included for
+  comparison.
+
+```bash
+python3 -m pigeon.demo    # the full worked meet: stamp/pending/revoke,
+                          # exclusive-evaluation cross-check, hearings
+```
+
 ## Running
 
 ```bash

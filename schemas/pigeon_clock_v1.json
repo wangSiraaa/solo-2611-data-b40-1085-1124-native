@@ -1,0 +1,56 @@
+{
+  "schema": "pigeon.clock",
+  "version": 1,
+  "description": "Racing-pigeon clock record directory: loft number (棚号), gate (门), time (时刻), open/close (开闭), ring read (读环) and explicit empty ring (空环). A close on the exit beam records one official arrival; a missing ring field means only that some competing pigeon passed; an explicit null means the non-competing empty-ring model.",
+  "root": {
+    "name": "ClockRecord",
+    "tag": {"class": "universal", "number": 16},
+    "type": "SEQUENCE",
+    "fields": [
+      {
+        "name": "loft",
+        "tag": {"class": "context", "number": 0},
+        "mode": "implicit",
+        "type": "INTEGER",
+        "description": "棚号 loft number"
+      },
+      {
+        "name": "gate",
+        "tag": {"class": "context", "number": 1},
+        "mode": "implicit",
+        "type": "INTEGER",
+        "description": "门 gate/beam id; the clock room maps ids to roles (entry beam 入门梁 / exit beam 出门梁)"
+      },
+      {
+        "name": "time",
+        "tag": {"class": "context", "number": 2},
+        "mode": "implicit",
+        "type": "INTEGER",
+        "description": "时刻 event time in clock ticks"
+      },
+      {
+        "name": "action",
+        "tag": {"class": "context", "number": 3},
+        "mode": "implicit",
+        "type": "INTEGER",
+        "description": "开闭 0=open 开, 1=close 合; only a close marks a beam crossing"
+      },
+      {
+        "name": "ring",
+        "tag": {"class": "context", "number": 4},
+        "mode": "explicit",
+        "type": "OCTET STRING",
+        "optional": true,
+        "description": "读环 named foot ring scanned by the antenna at this cross-section; absent means the read is missing (只知道有鸽)"
+      },
+      {
+        "name": "empty_ring",
+        "tag": {"class": "context", "number": 5},
+        "mode": "explicit",
+        "type": "NULL",
+        "optional": true,
+        "description": "空环 explicit null: the crossing pigeon is the non-competing empty-ring model"
+      }
+    ]
+  }
+}
