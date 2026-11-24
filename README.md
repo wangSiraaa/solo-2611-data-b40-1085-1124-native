@@ -131,13 +131,25 @@ C_RANGE usable V1/p2,V1/p3,V1/p4 -
 
 ```
 citation_system/   实现源码（catalog / repository / export / dependency / cli）
-tests/             52 个单元与集成测试（含随机不变量与目标规模）
+banquet/           礼俗宴席复原层（消费 citation-product/1；席位 / 传译 / 保密）
+tests/             52 + 36 个单元与集成测试（含随机不变量与目标规模）
 scripts/demo_726.py        端到端展示，逐步保留旧导出
+scripts/demo_banquet.py    宴席复原全部具体例，写 exports/banquet/
 scripts/benchmark_726.py   目标规模基准
 exports/scenario/  演示产生的各步骤导出（旧目录保留）
 exports/cli_run/   按 materials 原始输入走完整 CLI 的导出
+exports/banquet/   宴席复原的传译单与具体例结果
 work/              运行的 SQLite 数据库
 ```
+
+## 礼俗宴席复原层（`banquet/`）
+
+在只读产品 `citation-product/1` 之上复原一桌旧宴：PINNED 作签到页、RANGE 作
+逐页生效的仪注；枚举全部合规席图或给出无席依据，缺引用则挂起；沿相邻椅传译
+私有交谈（逐段共用语言与译员、每译员每轮最多一路），追踪具名线索、顺带听闻与
+保密约定；礼房对本场只采取一种管控（挡声屏或按轮换席），并让场方指出哪次旁听
+或越界会使整晚承诺失效。细节见 `banquet/README.md`；演示见
+`scripts/demo_banquet.py`。
 
 ## 不做什么
 

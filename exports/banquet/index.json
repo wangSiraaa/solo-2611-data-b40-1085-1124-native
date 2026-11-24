@@ -1,0 +1,175 @@
+{
+  "four_chair": {
+    "guests": {
+      "甲": [
+        "red"
+      ],
+      "乙": [
+        "blue"
+      ],
+      "丙": [
+        "blue",
+        "red"
+      ],
+      "丁": [
+        "blue",
+        "green"
+      ]
+    },
+    "original_order": {
+      "chart": [
+        "甲",
+        "丙",
+        "乙",
+        "丁"
+      ],
+      "feasible": true,
+      "path": [
+        "甲",
+        "丙",
+        "乙"
+      ],
+      "languages": [
+        "red",
+        "blue"
+      ],
+      "interpreter": [
+        "丙"
+      ]
+    },
+    "errata_甲_乙_丙_丁": {
+      "chart": [
+        "甲",
+        "乙",
+        "丙",
+        "丁"
+      ],
+      "feasible": false,
+      "failure": "no_authorized_relay_path"
+    },
+    "restore_order_revoke_c_permission": {
+      "chart": [
+        "甲",
+        "丙",
+        "乙",
+        "丁"
+      ],
+      "feasible": false,
+      "failure": "no_authorized_relay_path"
+    }
+  },
+  "red_blue": {
+    "base_chart": [
+      "甲",
+      "丙",
+      "戊",
+      "丁",
+      "乙",
+      null
+    ],
+    "seam": "丙-戊",
+    "no_control": {
+      "status": "breach",
+      "breaches": [
+        {
+          "group": "red_vs_blue",
+          "actor": [
+            "丙"
+          ],
+          "gathered": [
+            "blue",
+            "red"
+          ],
+          "via": "single_interpreter"
+        }
+      ],
+      "diagnostics": [
+        {
+          "round_index": 0,
+          "round_id": "R2r",
+          "conv_id": "R2",
+          "listener": "乙",
+          "hears": true,
+          "kind": "incidental"
+        },
+        {
+          "round_index": 0,
+          "round_id": "R2r",
+          "conv_id": "R2",
+          "listener": "丙",
+          "hears": true,
+          "kind": "incidental"
+        }
+      ]
+    },
+    "screen_with_empty_round": {
+      "install_round": 0,
+      "status": "ok",
+      "signed": true,
+      "diagnostics": [
+        {
+          "round_index": 1,
+          "round_id": "R2r",
+          "conv_id": "R2",
+          "listener": "乙",
+          "hears": true,
+          "kind": "incidental"
+        }
+      ]
+    },
+    "screen_no_empty_round": {
+      "feasible": false,
+      "reason": "no_empty_round_before_target",
+      "note": "cannot rescue the sheet by rewriting the record"
+    },
+    "swap_c_to_nonadjacent": {
+      "target_chair": 5,
+      "resulting_chart": [
+        "甲",
+        null,
+        "戊",
+        "丁",
+        "乙",
+        "丙"
+      ],
+      "status": "ok",
+      "signed": true
+    },
+    "designated_pair_breaks": {
+      "status": "breach",
+      "signed": false,
+      "breaches": [
+        {
+          "group": "red_vs_blue",
+          "actor": [
+            "丙",
+            "戊"
+          ],
+          "gathered": [
+            "blue",
+            "red"
+          ],
+          "via": "designated_pair"
+        }
+      ]
+    }
+  },
+  "real_products_flow": {
+    "suspend_reasons": [],
+    "catalog_revision": 1,
+    "signin_pages": [
+      "V1/p2",
+      "V1/p3"
+    ],
+    "ordinance_pages": [
+      "V1/p2",
+      "V1/p3",
+      "V1/p4"
+    ],
+    "decoded_clean": true,
+    "decoded_problems": [],
+    "seating_status": "seated",
+    "chart_count": 2,
+    "basis": []
+  }
+}
