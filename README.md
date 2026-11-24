@@ -7,7 +7,9 @@ Python 3.11 + 标准库 SQLite，无第三方依赖。全部数据合成，材�
 
 ```bash
 python3.11 demo.py                      # 端到端演示，内置断言，退出码 0 即全部兑现
-python3.11 -m unittest tests -v         # 32 个测试（含 500 副本/1000 票据规模用例）
+python3.11 demo_storybox.py            # 故事盒嗅觉/排程/交班演示，内置断言
+python3.11 -m unittest tests -v         # 32 个预约台账测试（含 500 副本/1000 票据规模用例）
+python3.11 -m unittest discover -v      # 再加 17 个故事盒测试，共 49 个
 ```
 
 ## 两个独立子系统
@@ -36,6 +38,43 @@ python3.11 -m unittest tests -v         # 32 个测试（含 500 副本/1000 票
 - 操作 ID + 请求指纹：同文重放原样返回，异文抛 `IdempotencyConflict` 且不写库；
   业务拒绝落 `rejected` 回执，失败不产生部分占用。
 
+## 故事盒带读层（`library/storybox.py`）
+
+这是在预约/取件之上新增的纯求解与现场记录层，不改动目录和台账规则；
+`LibrarySystem` 初始化时会挂上 `system.storybox`，盒子资料与签约单可用同一
+SQLite 连接持久化并重开。
+
+- **按实盒号装资料**：`StoryBoxDesk.register_box` 给物理副本/实盒号登记香片、
+  标签、留香拍数和有向遮蔽表；`load_by_receipt("PK1")` 或直接传 pickup 回执
+  dict，会读取回执上的 `copy` 实盒号。作品在新目录修订中合并后，不同 copy
+  仍可挂不同卡牌。
+- **逐拍嗅觉 oracle**：`replay_record(box, record, reader=...)` /
+  `StoryBoxDesk.replay(box_id, ...)` 按读者分别计算残留。规则可指定
+  `(旧味, 新味, 时间差, 被遮标签)`；多个未散残留同时匹配时全部进入
+  `maskings`，每条证据给出旧味来源牌、来源拍、时差和被遮提示。
+  `analyze_turn` 给单拍结果，`active_residues` / `decay_report` 检查中断后
+  留香仍按时差衰减。
+- **两座排程**：`Page` 声明可用实片、固定拍/时窗、必读标签、禁闻/惊喜约束；
+  `plan_guaranteed` / `maximum_guaranteed_seats` 穷举十拍、八牌上限内的安排，
+  校验同拍同牌、换座转手拍数、小盘固定座位和唯一送片员容量。`verify_run`
+  可直接核对现成的发片/转交/翻页表。
+- **付费自由页**：标 `free=True`（或在 guide 中给 `free_pages`）的两拍选择
+  由读者决定；求解器枚举所有选择，只有每个分支都能读通且许诺实片身份一致，
+  才返回 `guaranteed`。柜台不能把它偷改成指定拍，也不能只返回有利分支。
+- **两种带读法**：`mode="tray"`（小盘固定各座，场中不换盘，实际揭牌拍在还盘
+  前不可知）与 `mode="delivery"`（唯一送片员每拍只到一座，且必须在揭牌当拍
+  送到，不能提前放片）。`sign_booking` 返回可签的最多具名席位、各分支安排和
+  每座许诺实片。
+- **交班与续办**：`ReadingSession.handover_brief` / `brief_for_seat` 在小盘
+  归还前只给合同、时窗、许诺实片和可能世界，不暴露实际揭牌拍；`return_tray`
+  后才缩到真实分支。现场送片用 `deliver` 追加实际时点，记录同 ID 同文重放、
+  异文报 `IdempotencyConflict`，不能改拍/删除，因此不能事后抹掉已生成的残留。
+
+`demo_storybox.py` 固化了题面样例：0 青 2 白读通；遮蔽延到第二拍后梨被遮；
+另一读者锁住第 2 拍唯一白牌后甲失败；两座单读可行但合桌转手不及；甲的青页
+可在 0/1 拍自由揭时，白页留第 2 拍不能保证，改第 3 拍后小盘可签两席而现场
+送片同拍只能保一席；同一签单可分别从甲在 0 拍或 1 拍揭青的现场记录续办。
+
 ## 材料场景的兑现结果
 
 | 操作 | 结果 |
@@ -54,7 +93,10 @@ python3.11 -m unittest tests -v         # 32 个测试（含 500 副本/1000 票
 library/db.py       SQLite schema、显式事务、操作指纹、回执与版本计数器
 library/catalog.py  修订快照、边校验/环检测、多跳规范解析、拆别名、目录查询
 library/ledger.py   票据、prepare/commit、reserve、pickup、release、公开查询
-library/system.py   门面与重开（LibrarySystem.reopen）
+library/storybox.py 故事盒香片/遮蔽、两座排程、自由页保证、小盘/送片交班
+library/system.py   门面与重开（LibrarySystem.reopen，含 storybox 柜台）
 demo.py             材料严格重放 + 拆别名/环拒绝/过期重选/幂等/重开场景
+demo_storybox.py    松梨遮蔽、锁牌/转手、两席自由页、小盘与现场送片交班
 tests.py            unittest 测试与规模验证
+test_storybox.py    故事盒气味物理、排程保证、交班隐私与回执加载测试
 ```

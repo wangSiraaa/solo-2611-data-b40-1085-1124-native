@@ -8,6 +8,7 @@ from typing import Any
 from . import db
 from .catalog import CatalogService
 from .ledger import LedgerService
+from .storybox import StoryBoxDesk
 
 
 class LibrarySystem:
@@ -16,6 +17,12 @@ class LibrarySystem:
         self.conn = db.connect(db_path)
         self.catalog = CatalogService(self.conn)
         self.ledger = LedgerService(self.conn, self.catalog)
+        # 故事盒带读层复用同一连接；盒子资料/签约单表由该服务自行幂等建立。
+        self.storybox = StoryBoxDesk(self.conn)
+        # 常见语义别名，方便不同调用习惯。
+        self.story_box = self.storybox
+        self.scent_desk = self.storybox
+        self.guide_desk = self.storybox
 
     @classmethod
     def reopen(cls, db_path: str) -> "LibrarySystem":
