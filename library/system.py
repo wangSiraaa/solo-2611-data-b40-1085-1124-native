@@ -1,4 +1,4 @@
-"""系统门面：持有一条 SQLite 连接，组合目录与台账两个独立服务。"""
+"""系统门面：持有一条 SQLite 连接，组合目录、台账与亲称/柬房服务。"""
 
 from __future__ import annotations
 
@@ -7,6 +7,8 @@ from typing import Any
 
 from . import db
 from .catalog import CatalogService
+from .invitation import InvitationService
+from .kinship import KinshipService
 from .ledger import LedgerService
 
 
@@ -16,10 +18,16 @@ class LibrarySystem:
         self.conn = db.connect(db_path)
         self.catalog = CatalogService(self.conn)
         self.ledger = LedgerService(self.conn, self.catalog)
+        # 方言亲称词册与柬房：与目录/台账共用同一条连接与同一套幂等/回执设施
+        self.kinship = KinshipService(self.conn)
+        self.invitation = InvitationService(self.conn, self.kinship)
 
     @classmethod
     def reopen(cls, db_path: str) -> "LibrarySystem":
-        """重开持久化库：schema 用 IF NOT EXISTS 幂等建立，历史数据原样可见。"""
+        """重开持久化库：schema 用 IF NOT EXISTS 幂等建立，历史数据原样可见。
+
+        柬单号、素封编号、交接日志与全部回执一并保留，可按单号反复续办新柬。
+        """
         if db_path == ":memory:":
             raise ValueError("cannot reopen an in-memory database")
         if not Path(db_path).exists():

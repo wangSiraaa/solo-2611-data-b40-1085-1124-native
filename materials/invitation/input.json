@@ -1,0 +1,556 @@
+{
+  "comment": "方言亲称词册与联名柬验收材料，全部人物为虚构。WX 为归并后的规范亲称书目，V1/V2 是两村不同村志版本（副本），词义按实际取件副本号读取。",
+  "books": [
+    "WX"
+  ],
+  "catalogs": [
+    {
+      "revision": "k1",
+      "aliases": []
+    },
+    {
+      "revision": "k2",
+      "aliases": []
+    }
+  ],
+  "copies": [
+    {
+      "id": "V1",
+      "book": "WX",
+      "branch": "east_village",
+      "format": "paperback"
+    },
+    {
+      "id": "V2",
+      "book": "WX",
+      "branch": "west_village",
+      "format": "paperback"
+    }
+  ],
+  "copy_terms": [
+    {
+      "copy_id": "V1",
+      "entries": [
+        {
+          "term": "姑母",
+          "patterns": [
+            [
+              [
+                "up",
+                "father"
+              ],
+              [
+                "sib"
+              ]
+            ]
+          ]
+        },
+        {
+          "term": "姨母",
+          "patterns": [
+            [
+              [
+                "up",
+                "mother"
+              ],
+              [
+                "sib"
+              ]
+            ]
+          ]
+        },
+        {
+          "term": "长辈",
+          "patterns": [
+            [
+              [
+                "up",
+                "father"
+              ],
+              [
+                "sib"
+              ]
+            ],
+            [
+              [
+                "up",
+                "mother"
+              ],
+              [
+                "sib"
+              ]
+            ],
+            [
+              [
+                "up",
+                "father"
+              ],
+              [
+                "up",
+                "father"
+              ]
+            ],
+            [
+              [
+                "up",
+                "father"
+              ],
+              [
+                "up",
+                "mother"
+              ]
+            ],
+            [
+              [
+                "up",
+                "mother"
+              ],
+              [
+                "up",
+                "father"
+              ]
+            ],
+            [
+              [
+                "up",
+                "mother"
+              ],
+              [
+                "up",
+                "mother"
+              ]
+            ],
+            [
+              [
+                "up",
+                "father"
+              ],
+              [
+                "up",
+                "father"
+              ],
+              [
+                "sib"
+              ]
+            ],
+            [
+              [
+                "up",
+                "father"
+              ],
+              [
+                "up",
+                "mother"
+              ],
+              [
+                "sib"
+              ]
+            ],
+            [
+              [
+                "up",
+                "mother"
+              ],
+              [
+                "up",
+                "father"
+              ],
+              [
+                "sib"
+              ]
+            ],
+            [
+              [
+                "up",
+                "mother"
+              ],
+              [
+                "up",
+                "mother"
+              ],
+              [
+                "sib"
+              ]
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "copy_id": "V2",
+      "entries": [
+        {
+          "term": "姑母",
+          "patterns": [
+            [
+              [
+                "up",
+                "father"
+              ],
+              [
+                "sib"
+              ]
+            ]
+          ]
+        },
+        {
+          "term": "姨母",
+          "patterns": [
+            [
+              [
+                "up",
+                "mother"
+              ],
+              [
+                "sib"
+              ]
+            ]
+          ]
+        },
+        {
+          "term": "长辈",
+          "patterns": [
+            [
+              [
+                "up",
+                "father"
+              ],
+              [
+                "sib"
+              ]
+            ],
+            [
+              [
+                "up",
+                "mother"
+              ],
+              [
+                "sib"
+              ]
+            ],
+            [
+              [
+                "up",
+                "father"
+              ],
+              [
+                "up",
+                "father"
+              ]
+            ],
+            [
+              [
+                "up",
+                "father"
+              ],
+              [
+                "up",
+                "mother"
+              ]
+            ],
+            [
+              [
+                "up",
+                "mother"
+              ],
+              [
+                "up",
+                "father"
+              ]
+            ],
+            [
+              [
+                "up",
+                "mother"
+              ],
+              [
+                "up",
+                "mother"
+              ]
+            ],
+            [
+              [
+                "up",
+                "father"
+              ],
+              [
+                "up",
+                "father"
+              ],
+              [
+                "sib"
+              ]
+            ],
+            [
+              [
+                "up",
+                "father"
+              ],
+              [
+                "up",
+                "mother"
+              ],
+              [
+                "sib"
+              ]
+            ],
+            [
+              [
+                "up",
+                "mother"
+              ],
+              [
+                "up",
+                "father"
+              ],
+              [
+                "sib"
+              ]
+            ],
+            [
+              [
+                "up",
+                "mother"
+              ],
+              [
+                "up",
+                "mother"
+              ],
+              [
+                "sib"
+              ]
+            ]
+          ]
+        }
+      ]
+    }
+  ],
+  "trees": [
+    {
+      "tree_id": "T_pat",
+      "side": "patrilineal",
+      "attrs": {},
+      "persons": [
+        {
+          "id": "沈青",
+          "father": "沈父",
+          "mother": "沈母",
+          "seniority": 1
+        },
+        {
+          "id": "沈兰",
+          "father": "沈父",
+          "mother": "沈母",
+          "seniority": 2
+        },
+        {
+          "id": "沈父",
+          "father": "沈祖父",
+          "mother": "沈祖母",
+          "seniority": 2
+        },
+        {
+          "id": "沈母",
+          "father": null,
+          "mother": null,
+          "seniority": null
+        },
+        {
+          "id": "甲",
+          "father": "沈祖父",
+          "mother": "沈祖母",
+          "seniority": 1
+        },
+        {
+          "id": "沈祖父",
+          "father": "沈曾祖父",
+          "mother": "沈曾祖母",
+          "seniority": 1
+        },
+        {
+          "id": "沈祖母",
+          "father": null,
+          "mother": null,
+          "seniority": null
+        },
+        {
+          "id": "沈曾祖父",
+          "father": null,
+          "mother": null,
+          "seniority": null
+        },
+        {
+          "id": "沈曾祖母",
+          "father": null,
+          "mother": null,
+          "seniority": null
+        },
+        {
+          "id": "乙",
+          "father": "沈曾祖父",
+          "mother": "沈曾祖母",
+          "seniority": 2
+        }
+      ]
+    },
+    {
+      "tree_id": "T_mat",
+      "side": "matrilineal",
+      "attrs": {},
+      "persons": [
+        {
+          "id": "沈青",
+          "father": "沈父",
+          "mother": "沈母",
+          "seniority": 1
+        },
+        {
+          "id": "沈兰",
+          "father": "沈父",
+          "mother": "沈母",
+          "seniority": 2
+        },
+        {
+          "id": "沈母",
+          "father": "外曾祖父",
+          "mother": "外曾祖母",
+          "seniority": 2
+        },
+        {
+          "id": "沈父",
+          "father": null,
+          "mother": null,
+          "seniority": null
+        },
+        {
+          "id": "甲",
+          "father": "外曾祖父",
+          "mother": "外曾祖母",
+          "seniority": 1
+        },
+        {
+          "id": "外曾祖父",
+          "father": "外高祖父",
+          "mother": "外高祖母",
+          "seniority": 1
+        },
+        {
+          "id": "外曾祖母",
+          "father": null,
+          "mother": null,
+          "seniority": null
+        },
+        {
+          "id": "外高祖父",
+          "father": null,
+          "mother": null,
+          "seniority": null
+        },
+        {
+          "id": "外高祖母",
+          "father": null,
+          "mother": null,
+          "seniority": null
+        },
+        {
+          "id": "乙",
+          "father": "外高祖父",
+          "mother": "外高祖母",
+          "seniority": 2
+        }
+      ]
+    }
+  ],
+  "registrations": [
+    {
+      "reg_id": "R1",
+      "speaker": "沈青",
+      "referent": "甲",
+      "village": "east_village",
+      "copy_id": "V1",
+      "paths": [
+        [
+          [
+            "up",
+            "father"
+          ],
+          [
+            "sib"
+          ]
+        ],
+        [
+          [
+            "up",
+            "mother"
+          ],
+          [
+            "sib"
+          ]
+        ]
+      ]
+    },
+    {
+      "reg_id": "R2",
+      "speaker": "沈兰",
+      "referent": "甲",
+      "village": "east_village",
+      "copy_id": "V1",
+      "paths": [
+        [
+          [
+            "up",
+            "father"
+          ],
+          [
+            "sib"
+          ]
+        ],
+        [
+          [
+            "up",
+            "mother"
+          ],
+          [
+            "sib"
+          ]
+        ]
+      ]
+    }
+  ],
+  "positions": [
+    {
+      "position_id": "K1",
+      "keyed": true
+    }
+  ],
+  "trays": [
+    "东盘",
+    "西盘"
+  ],
+  "molds": [
+    "姑母",
+    "姨母",
+    "长辈"
+  ],
+  "cards": [
+    {
+      "card_id": "Q_sens",
+      "recipient": "甲",
+      "signers": [
+        "沈青",
+        "沈兰"
+      ],
+      "copy_id": "V1",
+      "deadline_shift": "S1"
+    },
+    {
+      "card_id": "Q_plain",
+      "recipient": "乙",
+      "signers": [
+        "沈青"
+      ],
+      "copy_id": "V1",
+      "deadline_shift": "S1"
+    }
+  ]
+}

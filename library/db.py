@@ -135,6 +135,122 @@ CREATE TABLE IF NOT EXISTS receipts (
     created_at  TEXT NOT NULL
 );
 CREATE INDEX IF NOT EXISTS idx_receipts_op ON receipts(op_id);
+
+-- ===========================================================================
+-- 亲称词册 / 家系 / 柬房（方言亲称业务，全部人物为虚构）
+-- 与既有目录/台账的衔接：词册本身作为 catalog 书目登记，村志版本即副本；
+-- 书目可经别名边归并，但词义只按“实际取走的副本号”读取，归并不揉掉版本身份。
+-- ===========================================================================
+
+-- 副本（村志版本）-> 词条：同一规范书目下不同副本可保留各自方言词义
+CREATE TABLE IF NOT EXISTS kin_copy_terms (
+    copy_id    TEXT PRIMARY KEY,
+    entries    TEXT NOT NULL,   -- JSON: [{"term": str, "patterns": [[step, ...], ...]}]
+    created_at TEXT NOT NULL
+);
+
+-- 候选家系：有限的具名关系备选；side 为受保护身份（父系/母系），attrs 为世界属性
+CREATE TABLE IF NOT EXISTS kin_trees (
+    tree_id    TEXT PRIMARY KEY,
+    side       TEXT,            -- 'patrilineal' / 'matrilineal' / NULL（无保密约定）
+    attrs      TEXT NOT NULL,   -- JSON：该世界的可观测属性（联名先后、字盘等）
+    created_at TEXT NOT NULL
+);
+
+-- 家系人物：父、母各至多一人（行列结构保证）；谱外长辈父母留空
+CREATE TABLE IF NOT EXISTS kin_persons (
+    tree_id      TEXT NOT NULL,
+    person_id    TEXT NOT NULL,
+    father_id    TEXT,
+    mother_id    TEXT,
+    seniority    INTEGER,       -- 同家长幼顺序（旁支称呼的次序依据）
+    off_pedigree INTEGER NOT NULL DEFAULT 0,
+    PRIMARY KEY (tree_id, person_id),
+    FOREIGN KEY (tree_id) REFERENCES kin_trees(tree_id)
+);
+
+-- 口述登记：说话人、所指、村别、该册容许的一组关系路径
+CREATE TABLE IF NOT EXISTS kin_registrations (
+    reg_id     TEXT PRIMARY KEY,
+    speaker    TEXT NOT NULL,
+    referent   TEXT NOT NULL,
+    village    TEXT NOT NULL,
+    copy_id    TEXT NOT NULL,
+    paths      TEXT NOT NULL,   -- JSON：关系路径备选（与词条同一套路径语言）
+    op_id      TEXT,
+    created_at TEXT NOT NULL
+);
+
+-- 证言：访谈员保管或移交礼房；实名证言可指认实际家系
+CREATE TABLE IF NOT EXISTS kin_testimony (
+    testimony_id  TEXT PRIMARY KEY,
+    holder        TEXT NOT NULL CHECK (holder IN ('interviewer', 'li_fang')),
+    named         INTEGER NOT NULL,
+    asserted_tree TEXT,
+    constraints   TEXT NOT NULL, -- JSON：对世界属性的附加约束
+    op_id         TEXT,
+    created_at    TEXT NOT NULL
+);
+
+-- 印坊字模（可用词集合，可撤换）
+CREATE TABLE IF NOT EXISTS inv_molds (
+    term      TEXT PRIMARY KEY,
+    available INTEGER NOT NULL
+);
+
+-- 字盘（东盘/西盘等物理字盘）
+CREATE TABLE IF NOT EXISTS inv_trays (
+    tray_id TEXT PRIMARY KEY
+);
+
+-- 印位班次占用：有钥印位一班至多一封（普通印台不建占用行，不能代打敏感封面）
+CREATE TABLE IF NOT EXISTS inv_position_shifts (
+    position_id TEXT NOT NULL,
+    shift       TEXT NOT NULL,
+    keyed       INTEGER NOT NULL,
+    card_id     TEXT,
+    PRIMARY KEY (position_id, shift)
+);
+
+-- 柬（单号即 card_id，可反复办理新柬、重开后按单号续办）
+CREATE TABLE IF NOT EXISTS inv_cards (
+    card_id         TEXT PRIMARY KEY,
+    recipient       TEXT NOT NULL,
+    signers         TEXT NOT NULL,   -- JSON 数组，1..8 人
+    copy_id         TEXT NOT NULL,   -- 借册号：词义按该副本读取
+    deadline_shift  TEXT NOT NULL,
+    sensitive       INTEGER NOT NULL,
+    must_joint      TEXT,            -- JSON：两人必须联名给同一收件人的约定
+    status          TEXT NOT NULL
+        CHECK (status IN ('registered', 'mailed', 'held', 'returned')),
+    op_id           TEXT,
+    created_at      TEXT NOT NULL
+);
+
+-- 寄件：封面全量仅持钥访谈员可核对；礼房投影由服务层按 mode/sealed 过滤
+CREATE TABLE IF NOT EXISTS inv_mailings (
+    envelope_no   TEXT PRIMARY KEY,
+    card_id       TEXT NOT NULL,
+    shift         TEXT NOT NULL,
+    mode          TEXT NOT NULL CHECK (mode IN ('local', 'sealed')),
+    position_id   TEXT,
+    term          TEXT,
+    tray_id       TEXT,
+    sealed        INTEGER NOT NULL,
+    public_status TEXT NOT NULL CHECK (public_status IN ('accepted', 'returned')),
+    op_id         TEXT,
+    created_at    TEXT NOT NULL
+);
+
+-- 礼房交接日志：礼房“实际收到”的资料，构成其累积证据（含旧回执，永不删除）
+CREATE TABLE IF NOT EXISTS inv_handover (
+    handover_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    field_kind  TEXT NOT NULL,      -- 'attr' 世界属性 / 'term_credential' 配词凭据 / 'mail_status'
+    payload     TEXT NOT NULL,      -- JSON
+    op_id       TEXT,
+    created_at  TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_handover_kind ON inv_handover(field_kind);
 """
 
 
@@ -162,6 +278,9 @@ def connect(db_path: str) -> sqlite3.Connection:
     )
     conn.execute(
         "INSERT OR IGNORE INTO meta(key, value) VALUES('hold_counter', '0')"
+    )
+    conn.execute(
+        "INSERT OR IGNORE INTO meta(key, value) VALUES('envelope_counter', '0')"
     )
     conn.commit()
     return conn

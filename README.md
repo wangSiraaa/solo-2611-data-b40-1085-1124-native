@@ -1,13 +1,16 @@
 # 合并书目下的预约先后与副本兑现
 
 Python 3.11 + 标准库 SQLite，无第三方依赖。全部数据合成，材料输入在
-`materials/765/input.json`。
+`materials/765/input.json`；方言亲称/联名柬业务材料在
+`materials/invitation/input.json`（全部人物为虚构）。
 
 ## 运行
 
 ```bash
-python3.11 demo.py                      # 端到端演示，内置断言，退出码 0 即全部兑现
-python3.11 -m unittest tests -v         # 32 个测试（含 500 副本/1000 票据规模用例）
+python3.11 demo.py                      # 借书端到端演示，内置断言，退出码 0 即全部兑现
+python3.11 demo_invitation.py           # 亲称/柬房五幕验收演示
+python3.11 -m unittest tests -v         # 32 个借书测试（含 500 副本/1000 票据规模用例）
+python3.11 -m unittest tests_invitation # 20 个请柬/亲称验收测试
 ```
 
 ## 两个独立子系统
@@ -51,10 +54,54 @@ python3.11 -m unittest tests -v         # 32 个测试（含 500 副本/1000 票
 ## 代码地图
 
 ```
-library/db.py       SQLite schema、显式事务、操作指纹、回执与版本计数器
-library/catalog.py  修订快照、边校验/环检测、多跳规范解析、拆别名、目录查询
-library/ledger.py   票据、prepare/commit、reserve、pickup、release、公开查询
-library/system.py   门面与重开（LibrarySystem.reopen）
-demo.py             材料严格重放 + 拆别名/环拒绝/过期重选/幂等/重开场景
-tests.py            unittest 测试与规模验证
+library/db.py         SQLite schema、显式事务、操作指纹、回执与版本计数器
+library/catalog.py    修订快照、边校验/环检测、多跳规范解析、拆别名、目录查询
+library/ledger.py     票据、prepare/commit、reserve、pickup、release、公开查询
+library/kinship.py    亲称词册、候选家系、口述语料、证言、可能世界认知引擎
+library/invitation.py 柬单、字模/字盘、印位班次、local/sealed 两种印寄、隐私闸
+library/scenarios.py  请柬材料装载与编程式造场景
+library/system.py     门面与重开（LibrarySystem.reopen）
+demo.py               借书材料严格重放 + 拆别名/环拒绝/过期重选/幂等/重开
+demo_invitation.py    请柬五幕验收（普通柬/相反隐私谱/顺序字盘泄密/同日两信/基础规则）
+tests.py              借书 unittest 与规模验证
+tests_invitation.py   请柬 unittest 验收
 ```
+
+## 亲称词册与联名柬（`kinship` + `invitation`）
+
+### 与借书系统的衔接
+
+- 方言词册仍走 `catalog`：村志版本是 `revision_copies` 里的副本，书目可经别名边
+  归并；但**词义只按真实取件回执上的副本号 `copy_id` 读取**（`kin_copy_terms`），
+  归并不揉掉“实际取走的村志版本”。
+- 复用同一套 SQLite 连接、操作 ID 幂等指纹与回执表；柬单号、素封编号、交接日志
+  与全部回执持久化，`reopen` 后可按单号反复办理新柬。
+
+### 家系与语料（`library/kinship.py`）
+
+- 候选家系是**有限具名备选**：父/母各至多一人（单字段保证），含环（含自环）
+  整批拒绝——选边不能令某人成为自己的祖先；谱外长辈父母留空、不参与备选关系。
+- 路径语言：`[["up","father"],["sib","elder"]]` 表示“父的姐”；`sib` 可带
+  `elder/younger`，旁支称呼由同一对父母与已登记 `seniority` 长幼顺序支持。
+- 每条口述登记说话人、所指、村别与该册容许的一组关系路径（如父的姐或母的姐）。
+- 证言分持钥访谈员/礼房两个 holder：实名证言把可能世界收缩为所指家系；
+  `tenable_trees` 按岗位可见证据现算“仍不能排除的家系”，`divergent_trees`
+  给出两份有分歧的具体家系。
+
+### 柬房与隐私闸（`library/invitation.py`）
+
+- 一张柬一行称呼，落款 1–8 人、待发至多 6 张；词只能从在架字模挑，且须对**全部
+  落款人 × 礼房每份仍成立家系**都语义正确（`safe_terms_for_card`），否则只能暂存。
+- 收件人各收一次；两人必须联名给同一收件人的约定在登记时校验。
+- 两种办理：
+  - **local（礼房离线印寄）**：看得到经手封面，普通印台；保密约定下敏感封面拒印。
+  - **sealed（访谈员有钥位封缄直寄）**：有钥印位一班一封、普通印台不能代用；
+    礼房只见素封编号 + 公开状态 + 班次，封面全量仅持钥岗位可核对。
+- 隐私闸：已登记带 `side`（父系/母系）的家系即启用。礼房累积交接材料（含旧回执）
+  后两种身份都不能被排除——配词要求两侧安全词强不可区分；顺序/字盘等单项资料
+  各自放行可过、联合放行若排除某身份即拒（`privacy_leak_single_item`）。
+- 角色化查询：`interviewer_mailings` 给持钥岗位逐封落款/收件人/称呼；
+  `li_fang_mailings` 与 `li_fang_receipts` 对封缄件只出素封投影；
+  `public_mail_status` 是准许公开的寄件状态。
+- `run_batch` 以截止前能安全寄出的最多具名信件交单，并保留已寄编号与本岗位
+  还能接哪封的记录（`keyed_capacity`）。
