@@ -1,0 +1,14 @@
+{
+  "name": "ex2-alight-changed",
+  "floors": [0, 1, 2, 3],
+  "direction": "up",
+  "capacity": 2,
+  "groups": [
+    {"id": "甲", "size": 1, "origin": 0, "destinations": [2, 3]}
+  ],
+  "observations": [
+    {"row_id": "u0", "trip_id": "t1", "interval": [0, 0], "type": "ups", "value": 1, "weight": 55},
+    {"row_id": "d2", "trip_id": "t1", "interval": [2, 2], "type": "downs", "value": 1, "weight": 55},
+    {"row_id": "d3", "trip_id": "t1", "interval": [3, 3], "type": "downs", "value": 0, "weight": 55}
+  ]
+}

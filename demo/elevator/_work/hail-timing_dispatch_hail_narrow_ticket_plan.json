@@ -1,0 +1,60 @@
+{
+  "beat": 0,
+  "board": [],
+  "branches": {
+    "alight=0;load=0": {
+      "beat": 2,
+      "board": [
+        {
+          "dest": 3,
+          "id": "丁"
+        },
+        {
+          "dest": 3,
+          "id": "戊"
+        }
+      ],
+      "branches": {
+        "alight=0;load=2": {
+          "beat": 4,
+          "board": [],
+          "branches": {
+            "alight=0;load=0": {
+              "closed": true,
+              "delivered": [
+                "丁",
+                "戊"
+              ]
+            }
+          },
+          "floor": 3,
+          "hail": false,
+          "score": 2
+        }
+      },
+      "floor": 2,
+      "hail": false,
+      "score": 2
+    }
+  },
+  "floor": 1,
+  "hail": false,
+  "handover_floor": 1,
+  "max_beats": 10,
+  "observed_alight": 1,
+  "planner_stats": {
+    "branches": 8,
+    "memo_hits": 0,
+    "nodes": 5
+  },
+  "protocol": "ticket",
+  "scenario": "hail-timing",
+  "score": 2,
+  "tickets": [
+    "丁",
+    "戊"
+  ],
+  "worlds": [
+    []
+  ]
+}

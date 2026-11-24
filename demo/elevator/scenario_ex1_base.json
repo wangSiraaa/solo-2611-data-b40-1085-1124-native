@@ -1,0 +1,14 @@
+{
+  "name": "ex1-base",
+  "floors": [0, 1, 2],
+  "direction": "up",
+  "capacity": 2,
+  "groups": [
+    {"id": "甲", "size": 1, "origin": 0, "destinations": [1, 2]}
+  ],
+  "observations": [
+    {"row_id": "c0", "trip_id": "t1", "interval": [0, 0], "type": "ups", "value": 1, "weight": 60},
+    {"row_id": "c1", "trip_id": "t1", "interval": [1, 1], "type": "downs", "value": 1, "weight": 60},
+    {"row_id": "c2", "trip_id": "t1", "interval": [2, 2], "type": "downs", "value": 0, "weight": 60}
+  ]
+}

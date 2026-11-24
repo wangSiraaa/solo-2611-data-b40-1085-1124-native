@@ -1,0 +1,13 @@
+{
+  "name": "hail-timing",
+  "floors": [0, 1, 2, 3],
+  "direction": "up",
+  "capacity": 2,
+  "groups": [
+    {"id": "甲", "size": 1, "origin": 0, "destinations": [1]}
+  ],
+  "observations": [
+    {"row_id": "u0", "trip_id": "t1", "interval": [0, 0], "type": "ups", "value": 1, "weight": 35},
+    {"row_id": "d1", "trip_id": "t1", "interval": [1, 1], "type": "downs", "value": 1, "weight": 85}
+  ]
+}

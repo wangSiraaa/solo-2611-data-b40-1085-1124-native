@@ -1,0 +1,43 @@
+{
+  "beat": 0,
+  "board": [
+    {
+      "dest": 2,
+      "id": "乙"
+    }
+  ],
+  "branches": {
+    "alight=0;load=2": {
+      "beat": 3,
+      "board": [],
+      "branches": {
+        "alight=0;load=0": {
+          "closed": true,
+          "delivered": [
+            "乙"
+          ]
+        }
+      },
+      "floor": 2,
+      "hail": false,
+      "score": 1
+    }
+  },
+  "floor": 1,
+  "hail": true,
+  "handover_floor": 1,
+  "max_beats": 10,
+  "observed_alight": 1,
+  "planner_stats": {
+    "branches": 3,
+    "memo_hits": 0,
+    "nodes": 2
+  },
+  "protocol": "hail",
+  "scenario": "ex1-base",
+  "score": 1,
+  "tickets": [],
+  "worlds": [
+    []
+  ]
+}

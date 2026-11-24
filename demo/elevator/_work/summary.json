@@ -1,0 +1,278 @@
+[
+  {
+    "dispatch": "dispatch_ex1_base.json",
+    "guaranteed_score": 1,
+    "handover_worlds": [
+      []
+    ],
+    "planner_nodes": 2,
+    "protocol": "ticket",
+    "scenario": "ex1-base",
+    "tickets": [
+      "乙"
+    ]
+  },
+  {
+    "dispatch": "dispatch_ex1_base.json",
+    "guaranteed_score": 1,
+    "handover_worlds": [
+      []
+    ],
+    "planner_nodes": 2,
+    "protocol": "hail",
+    "scenario": "ex1-base",
+    "tickets": []
+  },
+  {
+    "dispatch": "dispatch_ex1_downs0.json",
+    "guaranteed_score": 0,
+    "handover_worlds": [
+      [
+        [
+          2,
+          1
+        ]
+      ]
+    ],
+    "planner_nodes": 3,
+    "protocol": "ticket",
+    "scenario": "ex1-downs0",
+    "tickets": []
+  },
+  {
+    "dispatch": "dispatch_ex1_downs0.json",
+    "guaranteed_score": 0,
+    "handover_worlds": [
+      [
+        [
+          2,
+          1
+        ]
+      ]
+    ],
+    "planner_nodes": 2,
+    "protocol": "hail",
+    "scenario": "ex1-downs0",
+    "tickets": []
+  },
+  {
+    "dispatch": "dispatch_ex1_base.json",
+    "guaranteed_score": 0,
+    "handover_worlds": [
+      []
+    ],
+    "planner_nodes": 2,
+    "protocol": "ticket",
+    "scenario": "ex1-cap1",
+    "tickets": []
+  },
+  {
+    "dispatch": "dispatch_ex1_base.json",
+    "guaranteed_score": 0,
+    "handover_worlds": [
+      []
+    ],
+    "planner_nodes": 1,
+    "protocol": "hail",
+    "scenario": "ex1-cap1",
+    "tickets": []
+  },
+  {
+    "dispatch": "dispatch_blind.json",
+    "guaranteed_score": 0,
+    "handover_worlds": [
+      [
+        [
+          2,
+          1
+        ],
+        [
+          2,
+          1
+        ]
+      ],
+      [
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ]
+      ],
+      [
+        [
+          3,
+          1
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    ],
+    "planner_nodes": 5,
+    "protocol": "ticket",
+    "scenario": "blind-dest",
+    "tickets": []
+  },
+  {
+    "dispatch": "dispatch_blind.json",
+    "guaranteed_score": 0,
+    "handover_worlds": [
+      [
+        [
+          2,
+          1
+        ],
+        [
+          2,
+          1
+        ]
+      ],
+      [
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ]
+      ],
+      [
+        [
+          3,
+          1
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    ],
+    "planner_nodes": 5,
+    "protocol": "hail",
+    "scenario": "blind-dest",
+    "tickets": []
+  },
+  {
+    "dispatch": "dispatch_ex2.json",
+    "guaranteed_score": 1,
+    "handover_worlds": [
+      [
+        [
+          3,
+          1
+        ]
+      ]
+    ],
+    "planner_nodes": 13,
+    "protocol": "ticket",
+    "scenario": "ex2-doublebook",
+    "tickets": [
+      "丙"
+    ]
+  },
+  {
+    "dispatch": "dispatch_ex2.json",
+    "guaranteed_score": 1,
+    "handover_worlds": [
+      [
+        [
+          3,
+          1
+        ]
+      ]
+    ],
+    "planner_nodes": 5,
+    "protocol": "hail",
+    "scenario": "ex2-doublebook",
+    "tickets": []
+  },
+  {
+    "dispatch": "dispatch_ex2.json",
+    "guaranteed_score": 1,
+    "handover_worlds": [
+      [
+        [
+          2,
+          1
+        ]
+      ]
+    ],
+    "planner_nodes": 7,
+    "protocol": "ticket",
+    "scenario": "ex2-alight-changed",
+    "tickets": [
+      "丁"
+    ]
+  },
+  {
+    "dispatch": "dispatch_ex2.json",
+    "guaranteed_score": 1,
+    "handover_worlds": [
+      [
+        [
+          2,
+          1
+        ]
+      ]
+    ],
+    "planner_nodes": 5,
+    "protocol": "hail",
+    "scenario": "ex2-alight-changed",
+    "tickets": []
+  },
+  {
+    "dispatch": "dispatch_hail_narrow.json",
+    "guaranteed_score": 2,
+    "handover_worlds": [
+      []
+    ],
+    "planner_nodes": 5,
+    "protocol": "ticket",
+    "scenario": "hail-timing",
+    "tickets": [
+      "丁",
+      "戊"
+    ]
+  },
+  {
+    "dispatch": "dispatch_hail_narrow.json",
+    "guaranteed_score": 1,
+    "handover_worlds": [
+      []
+    ],
+    "planner_nodes": 5,
+    "protocol": "hail",
+    "scenario": "hail-timing",
+    "tickets": []
+  },
+  {
+    "dispatch": "dispatch_hail_wide.json",
+    "guaranteed_score": 2,
+    "handover_worlds": [
+      []
+    ],
+    "planner_nodes": 5,
+    "protocol": "ticket",
+    "scenario": "hail-timing",
+    "tickets": [
+      "丁",
+      "戊"
+    ]
+  },
+  {
+    "dispatch": "dispatch_hail_wide.json",
+    "guaranteed_score": 2,
+    "handover_worlds": [
+      []
+    ],
+    "planner_nodes": 5,
+    "protocol": "hail",
+    "scenario": "hail-timing",
+    "tickets": []
+  }
+]

@@ -1,0 +1,17 @@
+{
+  "name": "named-watch",
+  "floors": [0, 1, 2],
+  "direction": "up",
+  "capacity": 3,
+  "groups": [
+    {"id": "甲", "size": 1, "origin": 0, "destinations": [1, 2]},
+    {"id": "乙", "size": 1, "origin": 0, "destinations": [1, 2]},
+    {"id": "丙", "size": 1, "origin": 0, "destinations": [2]}
+  ],
+  "observations": [
+    {"row_id": "n0", "trip_id": "t1", "interval": [0, 0], "type": "ups", "value": 3,
+     "named_floor": 0, "named_in": ["甲", "乙", "丙"], "named_out": [], "weight": 75},
+    {"row_id": "g12", "trip_id": "t1", "interval": [1, 2], "type": "gross", "value": 3, "weight": 25},
+    {"row_id": "net", "trip_id": "t1", "interval": [0, 2], "type": "net", "value": 0, "weight": 50}
+  ]
+}

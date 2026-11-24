@@ -1,0 +1,9 @@
+{
+  "handover_floor": 1,
+  "observed_alight": 1,
+  "max_beats": 10,
+  "reservations": [
+    {"id": "丁", "size": 1, "origin": 2, "destinations": [3], "window": [2, 2]},
+    {"id": "戊", "size": 1, "origin": 2, "destinations": [3], "window": [2, 4], "deliver_by": 6}
+  ]
+}

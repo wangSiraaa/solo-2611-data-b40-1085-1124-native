@@ -1,0 +1,27 @@
+{
+  "beat": 0,
+  "board": [],
+  "branches": {
+    "alight=0;load=0": {
+      "closed": true,
+      "delivered": []
+    }
+  },
+  "floor": 1,
+  "hail": false,
+  "handover_floor": 1,
+  "max_beats": 10,
+  "observed_alight": 1,
+  "planner_stats": {
+    "branches": 1,
+    "memo_hits": 0,
+    "nodes": 2
+  },
+  "protocol": "ticket",
+  "scenario": "ex1-cap1",
+  "score": 0,
+  "tickets": [],
+  "worlds": [
+    []
+  ]
+}

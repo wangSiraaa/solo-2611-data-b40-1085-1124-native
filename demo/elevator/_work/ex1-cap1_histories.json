@@ -1,0 +1,13 @@
+{
+  "histories": [
+    {
+      "甲": 1
+    }
+  ],
+  "history_count": 1,
+  "sampled_rows": [
+    "c0",
+    "c1",
+    "c2"
+  ]
+}

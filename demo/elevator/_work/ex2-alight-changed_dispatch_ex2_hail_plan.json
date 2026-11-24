@@ -1,0 +1,57 @@
+{
+  "beat": 0,
+  "board": [],
+  "branches": {
+    "alight=0;load=1": {
+      "beat": 2,
+      "board": [
+        {
+          "dest": 3,
+          "id": "丁"
+        }
+      ],
+      "branches": {
+        "alight=1;load=2": {
+          "beat": 5,
+          "board": [],
+          "branches": {
+            "alight=0;load=0": {
+              "closed": true,
+              "delivered": [
+                "丁"
+              ]
+            }
+          },
+          "floor": 3,
+          "hail": false,
+          "score": 1
+        }
+      },
+      "floor": 2,
+      "hail": true,
+      "score": 1
+    }
+  },
+  "floor": 1,
+  "hail": false,
+  "handover_floor": 1,
+  "max_beats": 10,
+  "observed_alight": 0,
+  "planner_stats": {
+    "branches": 7,
+    "memo_hits": 0,
+    "nodes": 5
+  },
+  "protocol": "hail",
+  "scenario": "ex2-alight-changed",
+  "score": 1,
+  "tickets": [],
+  "worlds": [
+    [
+      [
+        2,
+        1
+      ]
+    ]
+  ]
+}
