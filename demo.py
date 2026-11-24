@@ -23,11 +23,23 @@ from cart_audit import (
     OperationRunner,
     load_motions,
     load_profile_revision,
+    load_scale_windows,
+    load_split_case,
+    ScaleAuditService,
+    WeighingCase,
+    FeasibleWeights,
+    SplitCase,
+    Design,
+    SplitCounter,
+    SealRegistry,
+    ProtocolMisuse,
+    NoWorkableTemplate,
 )
 from cart_audit.models import Knot, Trajectory
 from cart_audit.verifier import verify_report
 
 MATERIALS = Path(__file__).parent / "materials" / "728"
+MATERIALS_729 = Path(__file__).parent / "materials" / "729"
 Q = Fraction
 
 
@@ -93,6 +105,116 @@ def traj(cart_id: str, knots: Sequence[tuple], horizon: Tuple[Fraction, Fraction
 
 
 # --------------------------------------------------------------------- #
+# --------------------------------------------------------------------- #
+def demo_729() -> None:
+    """729 号案：合重称量 → 联合可行域 → 静态分家单 → 当场分家协议。"""
+    line("三、729 号案：平面秤称量、联合可行盒重与双方肯签的分家单")
+    _, profiles = load_profile_revision(MATERIALS_729 / "profiles.json")
+    _, trajectories = load_motions(MATERIALS_729 / "motions.json")
+    scale, windows = load_scale_windows(MATERIALS_729 / "scale_windows.json")
+    box_profile = profiles[0]
+    boxes = [(t.cart_id, box_profile, t) for t in trajectories]
+
+    print("\n[读数窗几何审核：共同细分逐 cell 精确求解，不采端点]")
+    verdicts = ScaleAuditService().audit_windows(scale, windows, boxes)
+    for v in verdicts:
+        if v["status"] == "legal":
+            print(
+                f"  {v['window_id']} 合法：全托 {v['contained'] or '空'}，"
+                f"零贡献 {v['zero']}，读数 {v['reading']}"
+                + ("（校零窗）" if v["calibration"] else "")
+            )
+        else:
+            bad = ", ".join(f"{b['box_id']}（{b['reason']}）" for b in v["bad"])
+            print(f"  {v['window_id']} 作废：{bad}；读数 {v['reading']} 不参与约束")
+    legal = [v for v in verdicts if v["status"] == "legal"]
+    assert {v["window_id"] for v in legal} == {"W_cal", "W1", "W2"}
+    void_window = next(v for v in verdicts if v["status"] == "void")
+    assert void_window["window_id"] == "W_void"
+
+    print("\n[联合可行称量解释：零点固定、合重区间共同求解]")
+    box_ids = [t.cart_id for t in trajectories]
+    feasible = FeasibleWeights(
+        WeighingCase(box_ids=tuple(box_ids), window_verdicts=tuple(verdicts))
+    )
+    feasible.require_feasible()
+    ranges = feasible.projected_ranges()
+    print("  联合域投影（不是逐盒独立界拼合）:", ranges)
+    assert ranges["J"] == (4, 4) and ranges["Y"] == (2, 2) and ranges["z"] == (0, 0)
+    candidate = {"J": 1, "Y": 5, "H": 1}
+    exclusion = feasible.exclusion_report(candidate)
+    print(f"  候选 {candidate} 被排除于窗: {exclusion['excluding_windows']}")
+    assert exclusion["excluding_windows"] == ["W2"]
+
+    print("\n[静态分家单：每个可行解释中两人各自不眼红]")
+    split_case = load_split_case(MATERIALS_729 / "split.json", box_ids, feasible)
+    beta = split_case.beta_sheets["b1"]
+    answer = split_case.find_static_partition(beta)
+    assert answer["found"]
+    part = answer["partition"]
+    print(
+        f"  乙包 {part['design']['b_pack']} / 甲包 {part['design']['a_pack']}；"
+        f"甲最小余量 {part['a_margin_min']}，乙最小余量 {part['b_margin_min']}"
+    )
+
+    print("\n[当场分家：红白青三盒各重 1，甲只知乙两张可能私单]")
+    rgb_verdicts = (
+        {"window_id": "cal", "status": "legal", "contained": [],
+         "zero": ["R", "W", "G"], "reading": [0, 0], "calibration": True},
+        {"window_id": "all", "status": "legal", "contained": ["R", "W", "G"],
+         "zero": [], "reading": [3, 3], "calibration": None},
+    )
+    rgb_fw = FeasibleWeights(
+        WeighingCase(box_ids=("R", "W", "G"), window_verdicts=rgb_verdicts)
+    )
+    rgb = SplitCase(
+        "rgb", ("R", "W", "G"), rgb_fw,
+        alpha={"R": 3, "W": 2, "G": 2},
+        beta_sheets={
+            "b_cyan": {"R": 1, "W": 1, "G": 3},
+            "b_white": {"R": 1, "W": 3, "G": 1},
+        },
+    )
+    generic = rgb.find_generic_design()
+    print("  单一通用封包对两张私单都成立？", generic["found"])
+    assert generic["found"] is False
+    d_cyan = next(d for d in rgb.enumerate_designs() if d.b_pack == frozenset(["G"]))
+    d_white = next(d for d in rgb.enumerate_designs() if d.b_pack == frozenset(["W"]))
+    seals = SealRegistry()
+    seals.issue("K1")
+    seals.issue("K2")
+    counter = SplitCounter(rgb, seals)
+    counter.register_templates([d_cyan, d_white])
+    for seal_id, sheet in (("K1", "b_cyan"), ("K2", "b_white")):
+        stamped = counter.officer_stamp(seal_id, sheet)
+        print(
+            f"  计量员凭 {seal_id} 对私单 {sheet} 盖第 "
+            f"{stamped['stamped_template_index']} 款：乙包 {stamped['design_to_pack']['b_pack']}"
+        )
+    try:
+        counter.officer_stamp("K1", "b_white")
+    except ProtocolMisuse as exc:
+        print("  复用保密签被拒绝:", exc)
+    try:
+        counter.generic_seal(d_cyan, actual_sheet="b_cyan")
+    except ProtocolMisuse as exc:
+        print("  后台读私单替甲选款被拒绝:", exc)
+
+    print("\n[变式：后窗读数订正为 1 / 乙系数改为 1，均无双方肯签分法]")
+    corrected = tuple(
+        {**v, "reading": [1, 1]} if v["window_id"] == "W2" else v for v in verdicts
+    )
+    fw_one = FeasibleWeights(WeighingCase(box_ids=tuple(box_ids), window_verdicts=corrected))
+    case_one = SplitCase("v1", tuple(box_ids), fw_one,
+                         alpha=split_case.alpha, beta_sheets=split_case.beta_sheets)
+    assert case_one.find_static_partition(beta)["found"] is False
+    case_flat = SplitCase("v2", tuple(box_ids), feasible,
+                          alpha=split_case.alpha,
+                          beta_sheets={"b1": {"J": 1, "Y": 1, "H": 0}})
+    assert case_flat.find_static_partition(case_flat.beta_sheets["b1"])["found"] is False
+    print("  两个变式枚举全部合规设计后均返回 found=False（附无解依据）")
+
+
 def main() -> None:
     line("一、materials/728 主场景（r1 -> 修订 r2 -> 旧报告保留）")
     db_path = str(Path(__file__).parent / "cart_audit_demo.sqlite3")
@@ -324,6 +446,8 @@ def main() -> None:
     assert set(lib.list_reports()) == report_before
     print("  失败后报告列表不变（无“可通过”外观发布）:", lib.list_reports())
     print("  audit_attempt 留痕:", [a["reason"].split(":")[0] for a in lib.list_attempts() if not a["ok"]])
+
+    demo_729()
 
     line("全部演示完成")
     print(f"持久化库: {db_path}（可重复打开独立查询；内存场景随进程结束释放）")

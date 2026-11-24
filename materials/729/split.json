@@ -1,0 +1,9 @@
+{
+  "case_id": "C729",
+  "alpha": {"J": 1, "Y": 1, "H": 0},
+  "beta_sheets": {
+    "b1": {"J": 1, "Y": 3, "H": 0}
+  },
+  "groups": [],
+  "fixed": {}
+}

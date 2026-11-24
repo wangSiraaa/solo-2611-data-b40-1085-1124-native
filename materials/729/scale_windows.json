@@ -1,0 +1,40 @@
+{
+  "scale": {
+    "scale_id": "S",
+    "x": 0,
+    "y": 0,
+    "half_width": 2,
+    "half_height": 2
+  },
+  "windows": [
+    {
+      "window_id": "W_cal",
+      "t0": 0,
+      "t1": 1,
+      "reading_low": 0,
+      "reading_high": 0,
+      "calibration": true
+    },
+    {
+      "window_id": "W1",
+      "t0": 2,
+      "t1": 4,
+      "reading_low": 6,
+      "reading_high": 6
+    },
+    {
+      "window_id": "W2",
+      "t0": 10,
+      "t1": 12,
+      "reading_low": 2,
+      "reading_high": 2
+    },
+    {
+      "window_id": "W_void",
+      "t0": 4,
+      "t1": 8,
+      "reading_low": 0,
+      "reading_high": 99
+    }
+  ]
+}

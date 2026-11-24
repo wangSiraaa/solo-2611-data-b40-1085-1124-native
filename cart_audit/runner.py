@@ -20,8 +20,17 @@ from .catalog import InputError, MotionStore, ProfileCatalog
 from .library import AuditLibrary
 from .models import Profile, Trajectory
 from .rational import fraction, rational_json_loads
+from .scale import Scale, ScaleWindow
+from .split import SplitCase
+from .weighing import FeasibleWeights
 
-__all__ = ["OperationRunner", "load_motions", "load_profile_revision"]
+__all__ = [
+    "OperationRunner",
+    "load_motions",
+    "load_profile_revision",
+    "load_scale_windows",
+    "load_split_case",
+]
 
 
 def load_profile_revision(path: str | Path) -> Tuple[str, List[Profile]]:
@@ -48,6 +57,48 @@ def load_motions(path: str | Path) -> Tuple[Tuple[object, object], List[Trajecto
     if len(set(ids)) != len(ids):
         raise InputError(f"cart_id 重复: {ids}")
     return (h0, h1), trajectories
+
+
+def load_scale_windows(path: str | Path) -> Tuple[Scale, List[ScaleWindow]]:
+    """载入静止平面秤与读数窗（含可选校零标志），全部精确值解释。"""
+    data = rational_json_loads(Path(path).read_text(encoding="utf-8"))
+    if not isinstance(data, dict) or "scale" not in data or "windows" not in data:
+        raise InputError(f"称量文件 {path} 缺少 scale/windows 字段")
+    scale = Scale.from_data(data["scale"])
+    if not isinstance(data["windows"], list) or not data["windows"]:
+        raise InputError("读数窗列表必须是非空列表")
+    windows = [ScaleWindow.from_data(item) for item in data["windows"]]
+    return scale, windows
+
+
+def load_split_case(
+    path: str | Path,
+    box_ids: List[str],
+    feasible: FeasibleWeights,
+) -> SplitCase:
+    """载入分家题面：甲系数、乙可能私单名单、遗赠组与既有签收。"""
+    from .split import SplitInputError
+
+    data = rational_json_loads(Path(path).read_text(encoding="utf-8"))
+    try:
+        alpha = {k: int(v) for k, v in data["alpha"].items()}
+        beta_sheets = {
+            str(sheet_id): {k: int(v) for k, v in coeffs.items()}
+            for sheet_id, coeffs in data["beta_sheets"].items()
+        }
+    except (KeyError, TypeError, ValueError) as exc:
+        raise SplitInputError(f"分家文件 {path} 系数字段非法: {exc}") from exc
+    groups = [list(map(str, group)) for group in data.get("groups", [])]
+    fixed = {str(k): str(v) for k, v in data.get("fixed", {}).items()}
+    return SplitCase(
+        case_id=str(data.get("case_id", Path(path).stem)),
+        box_ids=box_ids,
+        feasible=feasible,
+        alpha=alpha,
+        beta_sheets=beta_sheets,
+        groups=groups,
+        fixed=fixed,
+    )
 
 
 class OperationRunner:

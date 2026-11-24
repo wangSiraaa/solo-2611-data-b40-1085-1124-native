@@ -28,8 +28,12 @@
 | `cart_audit/library.py` | 共同细分核查、证据保存、批次报告、幂等与失败不发布 |
 | `cart_audit/verifier.py` | 用报告冻结快照独立重算并比对（篡改可检出） |
 | `cart_audit/runner.py` | `operations.jsonl` 操作流（audit / revise_profiles / read_report） |
-| `demo.py` | materials/728 主场景 + 六类边界场景端到端演示 |
+| `cart_audit/scale.py` | 静止平面秤与读数窗几何审核：完整托住、正面积相交、半搭窗作废（逐 cell 精确求解） |
+| `cart_audit/weighing.py` | 合重整数区间 + 同班固定零点的整数线性约束，带界传播回溯求联合可行域 |
+| `cart_audit/split.py` | 双方肯签的静态分家单、当场互补实物包协议、受托选款与保密签台账 |
+| `demo.py` | materials/728 主场景 + 六类边界场景 + materials/729 称量分家端到端演示 |
 | `tests/test_contract.py` | 27 个契约级测试（含 20 车 × 100 段规模用例） |
+| `tests/test_weighing_split.py` | 34 个称量/分家契约测试（几何合同、联合域、静态单、当场协议、签收、随机暴力交叉验证） |
 
 ## 核查方法
 
@@ -61,7 +65,7 @@
 ## 运行
 
 ```bash
-python3 -m unittest tests.test_contract -v   # 27 个测试
+python3 -m unittest tests.test_contract tests.test_weighing_split -v  # 61 个测试
 python3 demo.py                               # 端到端演示，生成 cart_audit_demo.sqlite3
 ```
 
@@ -87,3 +91,27 @@ SQLite 表：`profile_revision / profile / horizon / cart / trajectory_knot`
 （目录与轨迹），`report / report_pair / conflict / conflict_evidence /
 audit_attempt`（报告与留痕）。有理数以规范分数字符串 `p/q` 落库，读出
 还原为 `Fraction`，全程无浮点。
+
+## 称量与分家（materials/729）
+
+在同一套精确有理数/严格接触合同上加办，不引入浮点与采样：
+
+- **称量几何**（`scale.py`）：平面秤是静止矩形，物盒随具名托车走分段
+  线性轨迹。盒矩形整体落在秤内（贴边允许，`<=`）才**完整托住**贡献
+  全重；与秤始终无正面积相交（碰边/碰角沿用严格合同不算）贡献零；
+  窗内任一盒出现半搭、进出或边缘混杂，整窗作废。审核在共同细分网格上
+  逐 cell 精确求解，只采窗两端看不出中途半搭（729 的 `W_void` 即反例）。
+- **联合可行称量解释**（`weighing.py`）：合法窗给毛重整数区间，零点
+  偏差同班固定、由校零窗按**交集**限制。所有线性不等式在同一联合域上
+  带界传播 + 回溯求解（盒重 1..12、最多八盒）；逐盒投影只是联合域的
+  投影，禁止把逐盒上下界任意拼合。`exclusion_report` 指认某次合重
+  （或零点）排除某组候选重量的具体窗与最近边界。
+- **静态分家单**（`split.py`）：整组遗赠不拆、既有签收不可翻面；只有
+  在*每个*可行称量解释中两人各自看来自己所得都不少于另一份，两边才
+  肯签。枚举全部合规设计并给出无解依据，而不是只返回“找不到”。
+- **当场分家**：甲只见乙的可能系数单名单。无保密签时只能封一对对所有
+  私单、所有可行真重都成立的通用包（`generic_seal` 不接收乙实际私单，
+  后台读私单替甲选款直接拒绝）；有一张有号保密签时可先登记至多两款
+  纸包样，中立计量员屏后核实私单、只盖一次章、只回传款号，不传出任何
+  数值。保密签一次性，隔室借调已用的签、同款登记两次均拒绝。同值任挑
+  对既有签收的影响由 `tie_impact` 逐盒逐实挑路径给出。

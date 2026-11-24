@@ -12,7 +12,31 @@ from .catalog import ProfileCatalog, MotionStore, InputError
 from .service import ProfileOverlapService
 from .library import AuditLibrary, AuditRejected, AuditInputError
 from .verifier import verify_report
-from .runner import OperationRunner, load_motions, load_profile_revision
+from .scale import Scale, ScaleWindow, ScaleAuditService, ScaleInputError
+from .weighing import (
+    LinearConstraint,
+    WeighingCase,
+    WeighingInconsistent,
+    FeasibleWeights,
+    build_weighing_constraints,
+)
+from .split import (
+    Design,
+    SplitCase,
+    SplitInputError,
+    ProtocolMisuse,
+    NoWorkableTemplate,
+    SealRegistry,
+    SealStatus,
+    SplitCounter,
+)
+from .runner import (
+    OperationRunner,
+    load_motions,
+    load_profile_revision,
+    load_scale_windows,
+    load_split_case,
+)
 
 __all__ = [
     "fraction",
@@ -32,7 +56,26 @@ __all__ = [
     "AuditRejected",
     "AuditInputError",
     "verify_report",
+    "Scale",
+    "ScaleWindow",
+    "ScaleAuditService",
+    "ScaleInputError",
+    "LinearConstraint",
+    "WeighingCase",
+    "WeighingInconsistent",
+    "FeasibleWeights",
+    "build_weighing_constraints",
+    "Design",
+    "SplitCase",
+    "SplitInputError",
+    "ProtocolMisuse",
+    "NoWorkableTemplate",
+    "SealRegistry",
+    "SealStatus",
+    "SplitCounter",
     "OperationRunner",
     "load_motions",
     "load_profile_revision",
+    "load_scale_windows",
+    "load_split_case",
 ]
