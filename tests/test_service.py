@@ -388,6 +388,85 @@ def test_self_reference_cell():
         shutil.rmtree(tmp)
 
 
+def test_determined_difference_with_free_pipes():
+    """两管各有不确定零位（自由参数），但二者之差被唯一确定。
+
+    回归：目标输出挡“determined”时，其依赖闭包里仍含自由参数；验证器必须
+    符号代回（保留参数列），不能把自由变量填 0，否则会误判残差非零。
+    """
+    service, tmp = fresh_service()
+    try:
+        payload = {
+            "model_id": "M_DIFF",
+            "name": "自由零位下差确定",
+            "cells": {
+                "t": {"kind": "formula", "constant": "0",
+                      "terms": [{"coef": "1", "cell_id": "t"}]},  # 自由共同零位
+                "a": {"kind": "formula", "constant": "0",
+                      "terms": [{"coef": "1", "cell_id": "t"}]},
+                "b": {"kind": "formula", "constant": "3",
+                      "terms": [{"coef": "1", "cell_id": "t"}]},
+                "d": {"kind": "formula", "constant": "0",
+                      "terms": [{"coef": "1", "cell_id": "b"},
+                                {"coef": "-1", "cell_id": "a"}]},
+            },
+            "outputs": ["a", "b", "d"],
+        }
+        artifact, _, _ = publish_and_compile(service, payload)
+        report = service.solve(artifact)
+        qa = service.query(report["solve_id"], "M_DIFF::a")
+        qb = service.query(report["solve_id"], "M_DIFF::b")
+        qd = service.query(report["solve_id"], "M_DIFF::d")
+        check(qa["status"] == "parametric" and qb["status"] == "parametric",
+              "两管自身随自由零位不确定")
+        check(qd["status"] == "determined" and qd["value"] == "3",
+              "两管之差被唯一确定为 3")
+        check(service.verify_solve(report["solve_id"])["ok"],
+              "差确定/管不确定的报告独立验证通过")
+    finally:
+        shutil.rmtree(tmp)
+
+
+def test_free_pipe_not_spuriously_determined():
+    """跨块参数传播回归：乙 = 甲 + 3 且 甲 = t（自由），乙 必须仍为 parametric。
+
+    旧实现按“上游变量名”建参数列，而上游变量其实是底层自由参数 t 的仿射表达
+    式，导致 t 的贡献被索引丢失、乙被误报为 determined。修复后参数列按底层自由
+    参数建立，乙 应正确保留为 parametric。
+    """
+    service, tmp = fresh_service()
+    try:
+        payload = {
+            "model_id": "M_PROP",
+            "name": "跨块参数传播",
+            "cells": {
+                "t": {"kind": "formula", "constant": "0",
+                      "terms": [{"coef": "1", "cell_id": "t"}]},
+                "a": {"kind": "formula", "constant": "0",
+                      "terms": [{"coef": "1", "cell_id": "t"}]},
+                "b": {"kind": "formula", "constant": "3",
+                      "terms": [{"coef": "1", "cell_id": "a"}]},
+            },
+            "outputs": ["a", "b"],
+        }
+        artifact, _, _ = publish_and_compile(service, payload)
+        check(len(artifact["components"]) >= 2,
+              "a、b 分处不同 SCC（构成跨块传播场景）")
+        report = service.solve(artifact)
+        qb = service.query(report["solve_id"], "M_PROP::b")
+        check(qb["status"] == "parametric",
+              "乙 随自由 t 不确定（不被误判为确定）")
+        expr = qb["expression"]
+        check(expr["constant"] == "3"
+              and len(expr["param_terms"]) == 1
+              and expr["param_terms"][0]["coef"] == "1",
+              "乙 = 3 + 1·t 的仿射表达式正确")
+        check(service.verify_solve(report["solve_id"])["ok"],
+              "跨块参数传播报告独立验证通过")
+    finally:
+        shutil.rmtree(tmp)
+
+
 def run_all():
     tests = [
         test_unique_cycle,
@@ -401,6 +480,8 @@ def run_all():
         test_reopen_reports,
         test_no_floating_point_anywhere,
         test_self_reference_cell,
+        test_determined_difference_with_free_pipes,
+        test_free_pipe_not_spuriously_determined,
     ]
     for test in tests:
         test()

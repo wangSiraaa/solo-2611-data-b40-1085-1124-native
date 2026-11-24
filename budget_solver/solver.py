@@ -149,7 +149,10 @@ def solve_closure(artifact, closure):
     for cid in block_ids:
         members = [v for v in components[cid]["variables"] if v in closure_set]
         local_index = {v: i for i, v in enumerate(members)}
-        # 收集上游参数（出现在本块方程里、已被分类为表达式/自由的格）
+        # 收集上游**底层自由参数**（出现在本块方程里的上游表达式所携带的参数基）。
+        # 注意：参数列必须按底层自由参数（如 p_CARD::t）建列，而不是按上游变量名
+        # （如 CARD::甲）——上游变量本身可能只是底层参数的仿射表达式；若按变量名
+        # 建列，真正的参数贡献会被索引丢失，导致“各有不确定偏差的管”被误判为确定。
         upstream_params = set()
         for v in members:
             for ref_var in artifact["equations"][v]["coeffs"]:
@@ -157,8 +160,7 @@ def solve_closure(artifact, closure):
                     continue
                 info = known[ref_var]
                 if info[0] == "expr":
-                    upstream_params.add(ref_var)
-                    free_params.update(info[2].keys())
+                    upstream_params.update(info[2].keys())
         upstream_params = sorted(upstream_params)
         free_params.update(upstream_params)
 

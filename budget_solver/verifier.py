@@ -85,12 +85,12 @@ def independent_block_solve(equations, closure, scc_partition, topo_index):
     for cid in block_ids:
         members = [v for v in scc_partition[cid] if v in closure_set]
         local = {v: i for i, v in enumerate(members)}
+        # 同上：参数列按底层自由参数建列；上游变量可能只是底层参数的仿射表达式。
         upstream = set()
         for v in members:
             for ref in equations[v][0]:
                 if ref not in local and known[ref][0] == "expr":
-                    upstream.add(ref)
-                    free_params.update(known[ref][2].keys())
+                    upstream.update(known[ref][2].keys())
         upstream = sorted(upstream)
         free_params.update(upstream)
 
@@ -168,13 +168,64 @@ def _block_of(partition, variable):
 
 
 # ------------------------------------------------- 代回与表达式检查
-def substitute_all(equations, closure, assignment):
-    residuals = []
+def _expand_affine(classified, variable, memo, visiting):
+    """把独立复算出的分类展开成“常数 + Σ 系数·自由参数”的仿射形式。
+
+    自由参数在分类里表现为自指表达式 ``expr(0, {v: 1})``；这里把它当作参数基。
+    返回 ``(constant, {param: coef})``。闭包内表达式应当是 DAG；如遇意外环，
+    把该变量当作参数基而不递归，避免死循环。
+    """
+    if variable in memo:
+        return memo[variable]
+    info = classified[variable]
+    if info[0] == "fixed":
+        result = (info[1], {})
+        memo[variable] = result
+        return result
+    constant, parts = info[1], info[2]
+    coeffs = {}
+
+    def add(name, coef):
+        if coef:
+            coeffs[name] = coeffs.get(name, Fraction(0)) + coef
+
+    for ref, coef in parts.items():
+        if ref == variable or ref in visiting:
+            # 自由参数自身的基列（或防御性地断开环）
+            add(ref, coef)
+            continue
+        ref_const, ref_parts = _expand_affine(
+            classified, ref, memo, visiting | {variable}
+        )
+        constant += coef * ref_const
+        for name, c in ref_parts.items():
+            add(name, coef * c)
+    result = (constant, {k: v for k, v in coeffs.items() if v != 0})
+    memo[variable] = result
+    return result
+
+
+def symbolic_residuals(equations, closure, classified):
+    """用符号仿射展开核对闭包内每条原方程的残差恒为零。
+
+    与“把自由变量填 0 再代回”不同，这里保留自由参数的系数，逐条要求常数项与
+    每个参数列都为 0。这样“两管各有不确定偏差、但音程被唯一确定”的情形能正确
+    通过：目标值确定，同时相关方程在任意参数取值下恒成立。
+    """
+    memo = {}
+    residual_report = []
     for v in closure:
         coeffs, rhs = equations[v]
-        lhs = sum(coef * assignment.get(var, Fraction(0)) for var, coef in coeffs.items())
-        residuals.append((v, lhs - rhs))
-    return residuals
+        const = Fraction(0)
+        acc = {}
+        for ref, coef in coeffs.items():
+            ref_const, ref_parts = _expand_affine(classified, ref, memo, frozenset())
+            const += coef * ref_const
+            for name, c in ref_parts.items():
+                acc[name] = acc.get(name, Fraction(0)) + coef * c
+        leftover = {k: c for k, c in acc.items() if c != 0}
+        residual_report.append((v, const - rhs, leftover))
+    return residual_report
 
 
 def parse_expression(expr):
@@ -260,15 +311,14 @@ def verify_solve(catalog, artifact, report):
             record(f"{target} 独立复算唯一确定", info[0] == "fixed")
             record(f"{target} 确定值一致", info[1] == Fraction(output["value"]),
                    output["value"])
-            # 闭包内所有确定格共同赋值，代回全部原方程
-            assignment = {v: Fraction(0) for v in closure}
-            for v in closure:
-                if classified[v][0] == "fixed":
-                    assignment[v] = classified[v][1]
-            nonzero = [
-                (v, str(r)) for v, r in substitute_all(equations, closure, assignment) if r != 0
+            # 保留自由参数符号地代回闭包内全部原方程：目标唯一确定时，即便闭包
+            # 里还有自由参数，所有方程也必须恒成立（常数项与各参数列都为 0）。
+            bad = [
+                (v, str(const), str(leftover))
+                for v, const, leftover in symbolic_residuals(equations, closure, classified)
+                if const != 0 or leftover
             ]
-            record(f"{target} 代回全部闭包方程残差为 0", not nonzero, str(nonzero))
+            record(f"{target} 符号代回全部闭包方程残差恒零", not bad, str(bad))
         else:
             record(f"{target} 独立复算为非唯一", info[0] == "expr")
             const, parts = parse_expression(output["expression"])
