@@ -1,0 +1,61 @@
+{
+  "name": "uncertain-middle-half",
+  "blocks": [
+    {
+      "block_id": "U",
+      "size": [
+        4,
+        1,
+        1
+      ],
+      "models": [
+        {
+          "model_id": "hole-cell-2",
+          "holes": [
+            2
+          ],
+          "colored_wax": {
+            "left": "exhibit",
+            "right": "exhibit"
+          }
+        },
+        {
+          "model_id": "hole-cell-3",
+          "holes": [
+            3
+          ],
+          "colored_wax": {
+            "left": "exhibit",
+            "right": "exhibit"
+          }
+        }
+      ],
+      "fixtures": [
+        {
+          "id": "mid",
+          "axis": "x",
+          "at": 2
+        }
+      ]
+    }
+  ],
+  "probes": [],
+  "boxes": [
+    {
+      "box_id": "BOX-SAFE-HALF-WITH-DISPLAY-FACE",
+      "strips": [
+        {
+          "strip_id": "safe-half",
+          "shape": [
+            2,
+            1,
+            1
+          ],
+          "max_holes": 0,
+          "display_face": "any_outer",
+          "wax_color": "exhibit"
+        }
+      ]
+    }
+  ]
+}

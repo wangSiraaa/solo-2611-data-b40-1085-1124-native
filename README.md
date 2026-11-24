@@ -188,5 +188,97 @@ python3 -m wrsource.dataset verify --db src.sqlite --dataset ds_v2
 python3 -m wrsource.dataset compare --a ds_v2 --b ds_v2_full
 ```
 
+## 奶酪模型展质检台与切样程序
+
+新增代码只依赖标准库，核心包为 `wrsource.cheese`；同时保留 `cheese`、`qc.py`、
+`slicing.py` 等便捷导入别名。原 `demo/run_demo.py` 入口不变，奶酪案例入口为：
+
+```bash
+python3 demo/cheese_demo.py
+python3 -m wrsource.cheese examples
+python3 -m wrsource.cheese audit-demo --work demo/_work/cheese_audit
+
+# 直接对 canonical JSON 案例跑质检/切样
+python3 -m wrsource.cheese qc --case demo/cheese_case.json
+python3 -m wrsource.cheese plan --case demo/cheese_case.json \
+    --mode sealed --beats 1
+```
+
+### 输入概念
+
+- **块/候选模型**：`size` 每边最多 5 格，一次最多 4 块；模型给出零基 `holes`
+  体素坐标（一维整数 `4` 按“第 4 格”的一基简写处理）、`wax_faces`/`colored_wax`
+  与可选 `wax_voxels`。
+- **探针记录**：`block_id`、`entry_face`、`grid_point`、`direction`、
+  `first_hole_depth`（一基格序号）或 `solid: true`。有 `rig_id` 的记录共用同一
+  个安装朝向；默认枚举 24 个物理旋转，也可用 rig 的 `orientations` 限定。
+- **盒**：`boxes[].strips[]` 给出 `shape`、`max_holes` 和
+  `display_face: "left" | "right" | ... | "any_outer"`，可用 `wax_color` 对色蜡。
+- **夹具/实刀**：`fixtures` 或块内 `fixtures` 给出准许平面
+  `{"id":"mid","axis":"x","at":2}`；`cuts` 是已有实刀记录。已切开的子块不会被
+  合并回原块，对已消失父块再次落刀会报错。
+
+### 可重复调用 API
+
+```python
+from wrsource.cheese import (
+    quality_check, quality_check_dataset, explain_plane,
+    plan_order, CheeseDesk,
+)
+
+qc = quality_check(case)                 # 也可直接吃 samples.jsonl 的记录列表
+print(qc["possible_models_by_block"])    # 每块仍可能的完整模型
+print(qc["rig_orientation_conflicts"])   # 同架朝向冲突
+
+print(explain_plane(qc, "B", {"axis": "x", "at": 2}))
+
+# 普通单：提前封签，不能临时换条
+sealed = plan_order(qc, mode="sealed", station_beats=1)
+
+# 照面台：一个 cut beat + 一个 table beat，故 station_beats=2
+adaptive = plan_order(qc, mode="table", station_beats=2)
+
+# 读真实采样器产物，并可回查 SQLite 源版本
+qc2 = quality_check_dataset("ds_v1", source_db="src.sqlite", verify=True)
+remaining = plan_order(qc2, cuts=cuts, boxes=boxes, mode="sealed", cut_budget=0)
+```
+
+`plan_order(...)` 先按“完整盒数量最多”选盒，再在选中的盒集合内找固定切线/签条。
+固定签模式要求同一个具名 piece 对所有幸存模型都合格；照面台模式先选第一刀，
+按两个新鲜切面上的可见孔性格式分组，每组再跑固定方案。每个分支都独立保证
+“同一条实物不重复入盒”，不会把不同模型解释里的条凑成两份实物。
+
+### 题面四格案例的结论
+
+- 候选模型：仅第 4 格有孔（`only-cell-4`），或第 1、4 格有孔
+  （`cells-1-and-4`）。
+- 左探针记首孔在第 4 格后，只剩 `only-cell-4`；第 4 格会被 `x=3`
+  （第 3、4 格之间）那一刀露出，锁死的中线是 `x=2`，其中线切面必无孔。
+- 中线切出的左半是第 1–2 格，可作为预先点名的无孔条入盒；右半含第 4 格。
+  因此同一个四格块不能承诺两根两格无孔条，最多承诺一个这种盒/条。
+- 若把首孔更正为第 1 格，则只剩 `cells-1-and-4`，左右两半各有一孔；只有中线
+  夹具时没有两格无孔条。恢复深度 4 的旧正文/样本后，左半重新合格。
+- 两份探针若都挂同一 `rig_id`，报告会给出 `rig_orientation` 冲突：每条单独
+  都能找到朝向，但所有记录的公共朝向交集为空。
+- 孔只可能在第 2 或第 3 格时，固定封“左半”或“右半”都不能对两种模型保证；
+  `station_beats=2` 时照面台可在中线一刀后按所见格把无孔半条入盒，把该台拍
+  拿走（`station_beats=1`）后同一承诺不可行。
+
+### 加权源修订、首名撤回与重开复查
+
+`CheeseDesk`/`build_weighted_audit(path)` 会真实执行：
+
+1. `SourceService` 建源，原 `build_dataset` 产出样本；
+2. 确定性挑选使 `probe-P0-left4` 为同组首名的真实 seed；
+3. `set_body` 把首名正文更正为深度 1，再 `refresh_dataset`；
+4. 恢复深度 4，再用原采样器撤回首名并增量刷新，补入真实下一名；
+5. 保存旧版本签出的中线刀与 `B-left`/`B-right` 身份；
+6. `CheeseDesk.reopen(path).recheck()` 分别复查旧样本支持的签条，以及新版本
+   证据下已有两半的余料方案。
+
+旧数据集和不可变源版本仍保留深度 4 正文；新证据即使改为深度 1，也只改变复查
+结论，不会把已经锯开的 `B-left`、`B-right` 当成未切的 `B` 重排。
+
+
 规模验证：10 万行、100 组、每组 quota 1000（合计 10 万样本）时，写入约 2s，
 并行全量构建约 2.5s，增量刷新受影响组约 3s，校验约 3s。

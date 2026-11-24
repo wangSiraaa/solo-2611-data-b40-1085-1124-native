@@ -1,0 +1,71 @@
+{
+  "name": "shared-rig-orientation-conflict",
+  "station_beats": 1,
+  "blocks": [
+    {
+      "block_id": "B",
+      "size": [
+        4,
+        1,
+        1
+      ],
+      "models": [
+        {
+          "model_id": "only-cell-4",
+          "holes": [
+            4
+          ],
+          "wax_faces": "all"
+        },
+        {
+          "model_id": "cells-1-and-4",
+          "holes": [
+            1,
+            4
+          ],
+          "wax_faces": "all"
+        }
+      ],
+      "fixtures": [
+        {
+          "id": "mid",
+          "axis": "x",
+          "at": 2,
+          "description": "only locked midline clamp"
+        }
+      ]
+    }
+  ],
+  "probes": [
+    {
+      "probe_id": "P-requires-as-is",
+      "block_id": "B",
+      "rig_id": "RIG-1",
+      "entry_face": "left",
+      "first_hole_depth": 4
+    },
+    {
+      "probe_id": "P-requires-flip",
+      "block_id": "B",
+      "rig_id": "RIG-1",
+      "entry_face": "left",
+      "first_hole_depth": 1
+    }
+  ],
+  "boxes": [
+    {
+      "box_id": "BOX-TWO-CELL-NO-HOLE",
+      "strips": [
+        {
+          "strip_id": "two-cell-strip",
+          "shape": [
+            2,
+            1,
+            1
+          ],
+          "max_holes": 0
+        }
+      ]
+    }
+  ]
+}

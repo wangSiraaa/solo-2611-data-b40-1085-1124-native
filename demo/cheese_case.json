@@ -1,0 +1,68 @@
+{
+  "name": "four-cell-sealed-order",
+  "station_beats": 1,
+  "blocks": [
+    {
+      "block_id": "B",
+      "size": [
+        4,
+        1,
+        1
+      ],
+      "models": [
+        {
+          "model_id": "only-cell-4",
+          "holes": [
+            4
+          ],
+          "wax_faces": "all"
+        },
+        {
+          "model_id": "cells-1-and-4",
+          "holes": [
+            1,
+            4
+          ],
+          "wax_faces": "all"
+        }
+      ],
+      "fixtures": [
+        {
+          "id": "mid",
+          "axis": "x",
+          "at": 2,
+          "description": "only locked midline clamp"
+        }
+      ]
+    }
+  ],
+  "probes": [
+    {
+      "probe_id": "P-left-first-hole",
+      "block_id": "B",
+      "entry_face": "left",
+      "grid_point": [
+        0,
+        0
+      ],
+      "direction": "right",
+      "first_hole_depth": 4
+    }
+  ],
+  "boxes": [
+    {
+      "box_id": "BOX-TWO-CELL-NO-HOLE",
+      "strips": [
+        {
+          "strip_id": "two-cell-strip",
+          "shape": [
+            2,
+            1,
+            1
+          ],
+          "max_holes": 0
+        }
+      ]
+    }
+  ]
+}
