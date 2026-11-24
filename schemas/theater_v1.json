@@ -1,0 +1,38 @@
+{
+  "schema": "theater.event",
+  "version": 1,
+  "description": "Cloakroom event directory for the local theater model. One top-level record is one event; `kind` selects the event family and the remaining fields are optional and emitted in declaration order by the encoder.",
+  "root": {
+    "name": "TheaterEvent",
+    "tag": {"class": "universal", "number": 16},
+    "type": "SEQUENCE",
+    "fields": [
+      {"name": "kind", "tag": {"class": "context", "number": 0}, "mode": "implicit", "type": "INTEGER"},
+      {"name": "session", "tag": {"class": "context", "number": 1}, "mode": "implicit", "type": "INTEGER", "optional": true},
+      {"name": "beat", "tag": {"class": "context", "number": 2}, "mode": "implicit", "type": "INTEGER", "optional": true},
+      {"name": "guest", "tag": {"class": "context", "number": 3}, "mode": "implicit", "type": "INTEGER", "optional": true},
+      {"name": "coat", "tag": {"class": "context", "number": 4}, "mode": "implicit", "type": "INTEGER", "optional": true},
+      {"name": "tag_number", "tag": {"class": "context", "number": 5}, "mode": "implicit", "type": "INTEGER", "optional": true},
+      {"name": "ring", "tag": {"class": "context", "number": 6}, "mode": "implicit", "type": "INTEGER", "optional": true},
+      {"name": "slot", "tag": {"class": "context", "number": 7}, "mode": "implicit", "type": "INTEGER", "optional": true},
+      {"name": "window", "tag": {"class": "context", "number": 8}, "mode": "implicit", "type": "INTEGER", "optional": true},
+      {"name": "from_guest", "tag": {"class": "context", "number": 9}, "mode": "implicit", "type": "INTEGER", "optional": true},
+      {"name": "to_guest", "tag": {"class": "context", "number": 10}, "mode": "implicit", "type": "INTEGER", "optional": true},
+      {"name": "from_ring", "tag": {"class": "context", "number": 11}, "mode": "implicit", "type": "INTEGER", "optional": true},
+      {"name": "from_slot", "tag": {"class": "context", "number": 12}, "mode": "implicit", "type": "INTEGER", "optional": true},
+      {"name": "to_ring", "tag": {"class": "context", "number": 13}, "mode": "implicit", "type": "INTEGER", "optional": true},
+      {"name": "to_slot", "tag": {"class": "context", "number": 14}, "mode": "implicit", "type": "INTEGER", "optional": true},
+      {"name": "patterns", "tag": {"class": "context", "number": 15}, "mode": "implicit", "type": "OCTET STRING", "optional": true},
+      {"name": "cut_pattern", "tag": {"class": "context", "number": 16}, "mode": "implicit", "type": "INTEGER", "optional": true},
+      {"name": "receipt_kind", "tag": {"class": "context", "number": 17}, "mode": "implicit", "type": "INTEGER", "optional": true},
+      {"name": "sent_beat", "tag": {"class": "context", "number": 18}, "mode": "implicit", "type": "INTEGER", "optional": true},
+      {"name": "arrival_beat", "tag": {"class": "context", "number": 19}, "mode": "implicit", "type": "INTEGER", "optional": true},
+      {"name": "note", "tag": {"class": "context", "number": 20}, "mode": "explicit", "type": "OCTET STRING", "optional": true},
+      {"name": "counted", "tag": {"class": "context", "number": 21}, "mode": "implicit", "type": "INTEGER", "optional": true},
+      {"name": "counter", "tag": {"class": "context", "number": 22}, "mode": "implicit", "type": "INTEGER", "optional": true},
+      {"name": "return_beat", "tag": {"class": "context", "number": 23}, "mode": "implicit", "type": "INTEGER", "optional": true},
+      {"name": "order_id", "tag": {"class": "context", "number": 24}, "mode": "implicit", "type": "INTEGER", "optional": true},
+      {"name": "seal_id", "tag": {"class": "context", "number": 25}, "mode": "implicit", "type": "INTEGER", "optional": true}
+    ]
+  }
+}

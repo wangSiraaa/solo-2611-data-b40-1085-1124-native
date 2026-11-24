@@ -117,6 +117,35 @@ optional presence decisions, nested boundaries and error offsets.
 
 The block size is I/O granularity only and never changes offsets or results.
 
+## Local theater cloakroom model (`theater/`)
+
+`theater/` is a worked *application* of this directory: a community-theater
+cloakroom whose paper trail (hang, carry-to-another-hook, right-half transfer,
+damaged-tag rubbing, session-end count, reservations, deliveries, counter
+telegrams, transfer hooks, clutch choices) is a stream of real BER records
+encoded under `schemas/theater_v1.json` and imported through `Repository`. Every
+answer is read back from the reconstructed relation rows, not from the objects
+that produced them.
+
+* `theater/events.py` — event families, encode/stream helpers, `TheaterStore`.
+* `theater/model.py` — half-tags and the **uniqueness delivery rule** (a coat may
+  be handed only when its every compatible half-tag pairing already pins it to
+  that one guest), the coaxial rail/clutch kinematics, the transfer hook, and
+  worst-case telegram accounting (a real handout leaves a local physical receipt
+  and is counted once; duplicate reports are deduplicated).
+* `theater/admin.py` — still-possible pairings, MOVE-based hook recovery (never
+  by coincident steel number), the INVENTORY witness that forbids two coats to
+  one guest, and per-guest possible hooks at closing.
+* `theater/scenarios.py` — the concrete cases: one forward turn handing two
+  coats, a blurry re-rubbing that blocks the left window but still honours the
+  other, a reversed right-ring gear capping handouts at one per step, two
+  on-time orders demanding opposite axis turns, the 甲 handover with delayed
+  paper/hook, and the six-guest/five-hook/eight-beat envelope.
+
+```bash
+python3 -m theater.scenarios        # JSON report of every scenario
+```
+
 ## Fact repository
 
 `Repository` binds each import to one product id at creation. Ingest walks the
