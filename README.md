@@ -25,6 +25,9 @@ python3 -m obsdelivery.demo --db /tmp/obs.sqlite
 python3 -m pytest -q                  # 需 pytest；用 venv 安装即可
 ```
 
+另有同风格的陶埙试音台库 `xun/`（精确音窗、谱单可行性、尾声交付规划），
+见 [`xun/README.md`](xun/README.md)，运行 `python3 -m xun.demo`。
+
 ---
 
 ## 1. 位型语义
