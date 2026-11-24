@@ -19,6 +19,10 @@ from .errors import (
 from .ledger import EntityLedger
 from .consolidation import ConsolidationService
 from .verifier import verify_worksheet
+from .book import DividendHouse, BookError
+from .allocation import ShareBook, AllocError
+from .custody import ClaimBook, CustodyError, FACADE, CIRCUIT
+from .dividend import DividendWorkspace, DividendError, fresh
 
 __all__ = [
     "LedgerError",
@@ -29,4 +33,15 @@ __all__ = [
     "EntityLedger",
     "ConsolidationService",
     "verify_worksheet",
+    "DividendHouse",
+    "BookError",
+    "ShareBook",
+    "AllocError",
+    "ClaimBook",
+    "CustodyError",
+    "FACADE",
+    "CIRCUIT",
+    "DividendWorkspace",
+    "DividendError",
+    "fresh",
 ]
