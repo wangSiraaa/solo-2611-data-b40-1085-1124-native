@@ -1,0 +1,35 @@
+{
+  "format": "gauge-notebook/1",
+  "description": "四环叠盒复跑例：一只中层 M，基准磨失给 0/2 两个起点；上沿原规板 1+3，修订为 2+2；另含闭圈失败例 X。",
+  "journals": [
+    {
+      "journal_id": "M.bottom",
+      "divisions": 4,
+      "reference_feature": "notch",
+      "origin_candidates": [0, 2],
+      "pages": [
+        {"page_id": "mb1", "step": 4, "feature": "notch"}
+      ]
+    },
+    {
+      "journal_id": "M.top",
+      "divisions": 4,
+      "reference_feature": null,
+      "origin_candidates": [0, 2],
+      "pages": [
+        {"page_id": "mt1", "step": 1, "feature": "lug"},
+        {"page_id": "mt2", "step": 3, "feature": "notch"}
+      ]
+    },
+    {
+      "journal_id": "X.top",
+      "divisions": 4,
+      "reference_feature": null,
+      "origin_candidates": [0],
+      "pages": [
+        {"page_id": "x1", "step": 1, "feature": "lug"},
+        {"page_id": "x2", "step": 2, "feature": "notch"}
+      ]
+    }
+  ]
+}

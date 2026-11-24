@@ -1,0 +1,17 @@
+{
+  "format": "lacquer-pieces/1",
+  "divisions": 4,
+  "bases": [
+    {"item_id": "B0", "lugs": [0]},
+    {"item_id": "B2", "lugs": [2]}
+  ],
+  "lids": [
+    {"item_id": "L1", "notches": [1], "pinned_rotation": 0},
+    {"item_id": "L3", "notches": [3], "pinned_rotation": 0}
+  ],
+  "stack_order": ["M"],
+  "revisions": [
+    {"journal_id": "M.top", "page_id": "mt1", "step": 2, "feature": "lug"},
+    {"journal_id": "M.top", "page_id": "mt2", "step": 2, "feature": "notch"}
+  ]
+}

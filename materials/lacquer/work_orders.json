@@ -1,0 +1,133 @@
+{
+  "format": "lacquer-work-order/1",
+  "note": "三只工单共用同一套两世界构型 (下口0/上耳1) 与 (下口2/上耳3)；区别只在拍数与备舌授权。",
+  "orders": [
+    {
+      "order_id": "WO_gauge_two_beats",
+      "beat_budget": 2,
+      "required_original_tongues": {
+        "M": [
+          "wax_orig"
+        ]
+      },
+      "allowed_spare_tongues": {},
+      "original_tongues": {
+        "M": [
+          "wax_orig"
+        ]
+      },
+      "stations": [
+        {
+          "station_id": "S_gauge",
+          "vessel_id": "M",
+          "gauge": [
+            {
+              "rim": "bottom",
+              "cell": 0
+            }
+          ],
+          "trial_bites": []
+        },
+        {
+          "station_id": "S_bite",
+          "vessel_id": "M",
+          "gauge": [],
+          "trial_bites": [
+            {
+              "rim": "bottom",
+              "cell": 0,
+              "tongue_id": "wax_orig"
+            }
+          ]
+        }
+      ],
+      "format": "lacquer-work-order/1"
+    },
+    {
+      "order_id": "WO_bite_one_beat_with_spare",
+      "beat_budget": 1,
+      "required_original_tongues": {
+        "M": [
+          "wax_orig"
+        ]
+      },
+      "allowed_spare_tongues": {
+        "M": [
+          "wax_spare"
+        ]
+      },
+      "original_tongues": {
+        "M": [
+          "wax_orig"
+        ]
+      },
+      "stations": [
+        {
+          "station_id": "S_gauge",
+          "vessel_id": "M",
+          "gauge": [
+            {
+              "rim": "bottom",
+              "cell": 0
+            }
+          ],
+          "trial_bites": []
+        },
+        {
+          "station_id": "S_bite",
+          "vessel_id": "M",
+          "gauge": [],
+          "trial_bites": [
+            {
+              "rim": "bottom",
+              "cell": 0,
+              "tongue_id": "wax_spare"
+            }
+          ]
+        }
+      ],
+      "format": "lacquer-work-order/1"
+    },
+    {
+      "order_id": "WO_bite_one_beat_no_spare",
+      "beat_budget": 1,
+      "required_original_tongues": {
+        "M": [
+          "wax_orig"
+        ]
+      },
+      "allowed_spare_tongues": {},
+      "original_tongues": {
+        "M": [
+          "wax_orig"
+        ]
+      },
+      "stations": [
+        {
+          "station_id": "S_gauge",
+          "vessel_id": "M",
+          "gauge": [
+            {
+              "rim": "bottom",
+              "cell": 0
+            }
+          ],
+          "trial_bites": []
+        },
+        {
+          "station_id": "S_bite",
+          "vessel_id": "M",
+          "gauge": [],
+          "trial_bites": [
+            {
+              "rim": "bottom",
+              "cell": 0,
+              "tongue_id": "wax_orig"
+            }
+          ]
+        }
+      ],
+      "format": "lacquer-work-order/1"
+    }
+  ]
+}
